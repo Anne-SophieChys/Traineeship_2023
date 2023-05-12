@@ -5,7 +5,8 @@ My name is Anne-Sophie Chys. I am a bioinformatics student from the Howest Unive
 ## Subject
 This traineeship aims to investigate the evolution of OsGH27-homologs in plants and to perform molecular docking of carbohydrates.
 
-<hr>
+<hr>  
+
 ### Dynamics
 
 The dynamics of docking refers to the process of molecular docking that takes into account the movement and flexibility of the protein and ligand molecules involved. Traditional docking methods typically assume that the protein and ligand are rigid, but in reality, both molecules are flexible and can undergo conformational changes during the binding process.  
