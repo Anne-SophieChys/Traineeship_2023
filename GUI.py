@@ -66,9 +66,15 @@ size=(111,None), auto_size_text=True)],
                 [sg.Multiline(s=(111,10))],
                 [sg.Text('Or, upload file',
                          font='AnyFont 9 bold')],
-                [sg.Button('Browse')]
+                [sg.Button('Browse')]]
 
-]
+    log_layout = [[sg.Text("The [Logs] will be displayed below:")],
+                  [sg.Multiline(size=(60,15), font='Courier 8',
+                                expand_x=True, write_only=True,
+                                reroute_stdout=True, reroute_stderr=True,
+                                echo_stdout_stderr=True, autoscroll=True,
+                                auto_refresh=True)]]
+
 
     # Define the layout of the MSA tab
     msa_layout = [[sg.Text('This is the MSA layout')]]
@@ -82,9 +88,10 @@ size=(111,None), auto_size_text=True)],
                        k='-TEXT HEADING-', enable_events=True,
                        expand_x=True)]]
 
-    layout += [[sg.TabGroup([[sg.Tab('Start', intro_layout),
+    layout += [[sg.TabGroup([[sg.Tab('Introduction', intro_layout),
                               sg.Tab('BLAST', blast_layout),
-                              sg.Tab('MSA', msa_layout)]],
+                              sg.Tab('MSA', msa_layout),
+                              sg.Tab('Output', log_layout)]],
                               key='-TAB GROUP-', expand_x=True,
                               expand_y=True)]]
 
@@ -129,11 +136,9 @@ def main():
                      )
         elif event == "Browse":
             print("[LOG] Clicked 'Browse'")
-            folder_or_file = sg.popup_get_file('Choose your folder',
-                                               keep_on_top=True),
-            
-
-
+            folder_or_file = sg.popup_get_file('Choose your folder', keep_on_top = True)
+            sg.popup('You chose: ' + str(folder_or_file), keep_on_top = True)
+            print('[LOG] User chose file: ' + str(folder_or_file))
 
 
     window.close()
