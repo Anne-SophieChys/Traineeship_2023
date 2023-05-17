@@ -13,4 +13,8 @@ The dynamics of docking refers to the process of molecular docking that takes in
   
 Dynamic docking methods use molecular dynamics simulations to simulate the movements and interactions of the protein and ligand over time, taking into account their flexibility and changes in conformation. These simulations can provide more accurate predictions of binding affinities and binding modes than static docking methods.  
   
-In this case there are multiple dockings performed that needs to undergo dynamics for confirmation. This is done with a short bashscript where the dynamics will be performed automatically from directory to directory.
+In this case there are multiple dockings performed that needs to undergo dynamics for confirmation. This is done with a short bashscript where the dynamics will be performed automatically from directory to directory. A tree of the directories can be revieuwed below:  
+  
+charmm* -> amber -> README  
+  
+These 'charmm*' directories containing the amber and README files, are obtained from [CHARMM-GUI](https://www.charmm-gui.org/). For this dynamics, there is chosen for the option 'Input Generator' to perform a 'Solution Builder'. The options to build these files are free to choose, only what is specific to this set of directories, is the choice of the 'Force Field Options:' and the 'Input Generation Options:' as 'AMBER'.
