@@ -7,9 +7,6 @@
 
 # Installations ##############################################################
 # pip install pysimplegui (v4.60.4)
-# pip install cblaster (cblaster 1.3.18)
-
-
 # Load the packages ----------------------------------------------------------
 import PySimpleGUI as sg
 from PIL import Image, ImageTk
@@ -21,10 +18,10 @@ import os
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Construct the path to the image file
-# image_path = os.path.join(script_dir, "Biopython_logo.png")
-# size = (120,80)
-# im = Image.open(image_path)
-# im = im.resize(size, resample=Image.BICUBIC)
+image_path = os.path.join(script_dir, "Biopython_logo.png")
+size = (120,80)
+im = Image.open(image_path)
+im = im.resize(size, resample=Image.BICUBIC)
 
 ##################
 ##################
@@ -99,19 +96,50 @@ sequences in a database. BLAST uses an algorithm that rapidly aligns the \
 query sequence with sequences in the database and calculates a similarity \
 score. This score indicates the degree of sequence similarity or homology \
 between the query and database sequences.',
-size=(111,None), auto_size_text=True)],
+size=(105,None), expand_x=True)],
+                [sg.Text('Program Selection', font='AnyFont 12 bold')],
+                [sg.Combo(values=('blastn', 'blastp', 'blastx', 'tblastn', 'tblastx'),
+                          default_value='blastn',
+                          readonly=True,
+                          key='-BLASTTYPE-')],
 
                 [sg.Text('Enter Query Sequence', font='AnyFont 12 bold')],
                 [sg.Text('Enter accession number(s) or FASTA sequence(s)', font='AnyFont 9 bold')],
-                [sg.Multiline(key= '-QUERY-', size=(111,10)), sg.InputText()],
+                [sg.Multiline(key= '-QUERY-', size=(111,6)), sg.InputText()],
+
                 [sg.Text('Or, upload file', font='AnyFont 9 bold'),
-                 sg.Button('Browse')],
-                [sg.Combo(values=('blastn', 'blastp', 'blastx', 'tblastn', 'tblastx'),
-                          default_value='blastn',
-                          readonly=False,
-                          key='-BLASTTYPE-')],
-                [sg.Multiline(key='-FILE-', size=(111,10))],
-                [sg.Button('Submit')]
+                sg.VSeparator(),
+                sg.FileBrowse(),
+                sg.Input(key='-INFILE-', border_width=0, background_color='#9FB8AD')],
+                
+                [sg.Text('Job Title\t          ', font='AnyFont 9 bold'),
+                 sg.VSeparator(),
+                 sg.Input(key='-JOBTITLE-', border_width=0)],
+
+                [sg.Text('Database          ', font='AnyFont 9 bold'),
+                 sg.VSeparator(),
+                 sg.Combo(values=('Reference RNA sequence (refseq_rna)',
+                                  'RefSeq Genome Database (refseq_genomes)',
+                                  'PDB nucleotide database (pdb)',
+                                  'Non-redundant protein sequences (nr)',
+                                  'UniProtKB/Swiss-Prot(swissprot)',
+                                  'Patented protein sequences(pataa)',
+                                  'Metagenomic proteins(env_nr)',
+                                  'Transcriptome Shotgun Assembly proteins (tsa_nr)'),
+                         key='-DB-')],
+                
+                [sg.Text('Algorithm parameters', font='AnyFont 12 bold')],
+                [sg.Text('Max target \nsequences        ', font='AnyFont 9 bold'),
+                 sg.VSeparator(),
+                 sg.Combo(values=(10,50,100,200,250,500,1000,5000),
+                          default_value='100',
+                          key='-MAXTS-')],
+
+                [sg.Text('Threshold         ', font='AnyFont 9 bold'),
+                 sg.VSeparator(),
+                 sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
+
+                [sg.Button('BLAST')]
                 ]
 
 # Define the layout of the MSA tab
@@ -137,15 +165,15 @@ layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
                     [[sg.Tab('Introduction', intro_layout),
                       sg.Tab('BLAST', blast_layout),
                       sg.Tab('MSA', msa_layout)]],
-                      key='-COLUMN1-', size=(750,800), expand_y=True
+                      size=(750,800), expand_y=True
                 )]], sbar_relief=sg.RELIEF_RAISED),
 
           sg.Column(
                     [[sg.Frame('', log_layout, border_width=0,
                                pad=((0,0),(20,0)))]],
-                               expand_y=True, key='-COLUMN2-')
+                               expand_y=True)
                 ]]
-    
+
 ##############################################################################
 ##############################################################################
 #                                 def main                                   #
@@ -159,11 +187,11 @@ def main():
 window = sg.Window('Graphical User Interphase', layout,
                    grab_anywhere=True,
                    size=(1400,800), use_custom_titlebar=True,
-                   finalize=True, keep_on_top=True,)
+                   finalize=True, keep_on_top=True)
     
 # Convert im to ImageTK.PhotoImage after window finalized
-# image = ImageTk.PhotoImage(image=im)
-# window['-IMAGE-'].update(data=image)
+image = ImageTk.PhotoImage(image=im)
+window['-IMAGE-'].update(data=image)
 
 # Event loop -------------------------------------------------------------
 while True:
@@ -190,10 +218,10 @@ while True:
             
     elif event == "Browse":
         print("[LOG] Clicked 'Browse'")
-        folder_or_file = sg.popup_get_file('Choose your folder',
-                                            keep_on_top = True)
-        sg.popup('You chose: ' + str(folder_or_file), keep_on_top = True)
-        print('[LOG] User chose file: ' + str(folder_or_file))
+        selected_file = values['-BROWSEFILE-']
+        if selected_file:
+            file_name = selected_file.split('/')[-1]
+            window['-BROWSEFILE-'].update(file_name)
 
     #elif event == 'Process Bar'
         #         print("[LOG] Clicked Test Progress Bar!")
@@ -202,18 +230,77 @@ while True:
         #     print("[LOG] Updating progress bar by 1 step ("+str(i)+")")
         #     progress_bar.update(current_count=i + 1)
         # print("[LOG] Progress bar complete!")
-    
-#     if event == '-BLASTTYPE-':
-#         if values['-BLASTTYPE-'][0]:
-#             window['-BLASTTYPE-'].update(values['-BLASTTYPE-'][:-1])
-
-# print(values['-BLASTTYPE-'])
 
 window.close()
 
-if __name__ == '__main__':
-    # Set the PySimpleGUI themse
-    sg.theme('black')
-    sg.theme('dark red')
-    sg.theme('dark green 7')
-    # sg.theme('DefaultNoMoreNagging')
+
+#=============================================================================
+#=============================================================================
+#=============================================================================
+# BLAST Settings
+from bs4 import BeautifulSoup
+import urllib
+import urllib.request
+import sys
+
+headers = {}
+headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36"
+url = "https://blast.ncbi.nlm.nih.gov/Blast.cgi"
+
+try:
+    request = urllib.request.Request(url, headers = headers)
+    response = urllib.request.urlopen(request)
+    data = response.read().decode("utf-8")
+
+except Exception as e:
+    sys.exit("{}\nSearching blast.ncbi.nlm.nih.gov/Blast.cgi --> Q5QLK3\n", e)
+
+soup = BeautifulSoup(data, "html.parser")
+
+# # Ask for input --------------------------------------------------------------
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
+
+program = values['-BLASTTYPE-']
+location = url + "?PROGRAM=" + program + "&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome"
+
+driver = webdriver.Firefox()
+driver.get(location)
+
+# Get information about the -QUERY-
+inputquery = values['-QUERY-']
+# inputfile = values['--'] browse doesn't work yet
+query = driver.find_element(By.ID, "seq")
+query.send_keys(inputquery)
+
+# Get information about the -JOBTITLE-
+inputjobtitle = values['-JOBTITLE-']
+jobtitle = driver.find_element(By.NAME, "JOB_TITLE")
+jobtitle.send_keys(inputjobtitle)
+
+# Get information about the -DB-
+inputdatabase = values['-DB-']
+database = driver.find_element(By.NAME, "DATABASE")
+database.send_keys(inputdatabase)
+
+# # Click on the BLAST Button
+# Algorithmbutton = driver.find_element(By.CLASS_NAME, "usa-accordion-button")
+# Algorithmbutton.click()
+
+# # Get information about the -MAXTS-
+# inputmax = values['-MAXTS-']
+# max = driver.find_element(By.NAME, "MAX_NUM_SEQ")
+# max.send_keys(inputmax)
+
+# # Get information about the -THRESHOLD-
+# inputthreshold = values['-THRESHOLD-']
+# threshold = driver.find_element(By.NAME, "EXPECT")
+# threshold.send_keys(inputthreshold)
+
+# Click on the BLAST Button
+blast = driver.find_element(By.CLASS_NAME, "blastbutton")
+blast.click()
+#=============================================================================
+#=============================================================================
+#=============================================================================
