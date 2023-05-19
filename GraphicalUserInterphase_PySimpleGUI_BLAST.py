@@ -23,6 +23,34 @@ size = (120,80)
 im = Image.open(image_path)
 im = im.resize(size, resample=Image.BICUBIC)
 
+#=============================================================================
+#========================= BLAST Settings ====================================
+#=============================================================================
+# BLAST Settings
+from bs4 import BeautifulSoup
+import urllib
+import urllib.request
+import sys
+
+headers = {}
+headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36"
+url = "https://blast.ncbi.nlm.nih.gov/Blast.cgi"
+
+try:
+    request = urllib.request.Request(url, headers = headers)
+    response = urllib.request.urlopen(request)
+    data = response.read().decode("utf-8")
+
+except Exception as e:
+    sys.exit("{}\nSearching blast.ncbi.nlm.nih.gov/Blast.cgi --> Q5QLK3\n", e)
+
+soup = BeautifulSoup(data, "html.parser")
+#=============================================================================
+#=============================================================================
+#=============================================================================
+
+
 ##################
 ##################
 ##################
@@ -199,13 +227,59 @@ while True:
 
     # Log
     if event not in (sg.TIMEOUT_EVENT, sg.WIN_CLOSED):
-        print('=========== Event = ', event, ' =========== ')
+        print('=========== Event = ', event, ' ============ ')
         print('----- Values Directory (key=value) -----')
         for key in values:
             print(key, ' = ', values[key])
 
     if event in (None, 'Exit'):
         print("[LOG] Clicked on 'Exit'")
+
+        # Ask for input --------------------------------------------------------------
+        from selenium import webdriver
+        from selenium.webdriver.common.by import By
+
+        program = values['-BLASTTYPE-']
+        location = url + "?PROGRAM=" + program + "&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome"
+
+        driver = webdriver.Firefox()
+        driver.get(location)
+
+        # Get information about the -QUERY-
+        inputquery = values['-QUERY-']
+        # inputfile = values['--'] browse doesn't work yet
+        query = driver.find_element(By.ID, "seq")
+        query.send_keys(inputquery)
+
+        # Get information about the -JOBTITLE-
+        inputjobtitle = values['-JOBTITLE-']
+        jobtitle = driver.find_element(By.NAME, "JOB_TITLE")
+        jobtitle.send_keys(inputjobtitle)
+
+        # Get information about the -DB-
+        inputdatabase = values['-DB-']
+        database = driver.find_element(By.NAME, "DATABASE")
+        database.send_keys(inputdatabase)
+
+        # # Click on the BLAST Button
+        # Algorithmbutton = driver.find_element(By.CLASS_NAME, "usa-accordion-button")
+        # Algorithmbutton.click()
+
+        # # Get information about the -MAXTS-
+        # inputmax = values['-MAXTS-']
+        # max = driver.find_element(By.NAME, "MAX_NUM_SEQ")
+        # max.send_keys(inputmax)
+
+        # # Get information about the -THRESHOLD-
+        # inputthreshold = values['-THRESHOLD-']
+        # threshold = driver.find_element(By.NAME, "EXPECT")
+        # threshold.send_keys(inputthreshold)
+
+        # Click on the BLAST Button
+        blast = driver.find_element(By.CLASS_NAME, "blastbutton")
+        blast.click()
+
+
         break
 
     if event == 'About':
@@ -216,91 +290,14 @@ while True:
                     'url :: \"https://github.com/PySimpleGUI/PySimpleGUI\"',
                     keep_on_top=True)
             
-    elif event == "Browse":
-        print("[LOG] Clicked 'Browse'")
-        selected_file = values['-BROWSEFILE-']
-        if selected_file:
-            file_name = selected_file.split('/')[-1]
-            window['-BROWSEFILE-'].update(file_name)
-
-    #elif event == 'Process Bar'
-        #         print("[LOG] Clicked Test Progress Bar!")
-        # progress_bar = window['-PROGRESS BAR-']
-        # for i in range(100):
-        #     print("[LOG] Updating progress bar by 1 step ("+str(i)+")")
-        #     progress_bar.update(current_count=i + 1)
-        # print("[LOG] Progress bar complete!")
+    # if event == "Browse":
+    #     print("[LOG] Clicked 'Browse'")
+    #     selected_file = values['-BROWSEFILE-']
+    #     if selected_file:
+    #         file_name = selected_file.split('/')[-1]
+    #         window['-BROWSEFILE-'].update(file_name)
+    
+    if event == "Submit":
+        print("[LOG] Clicked 'Submit'")
 
 window.close()
-
-
-#=============================================================================
-#=============================================================================
-#=============================================================================
-# BLAST Settings
-from bs4 import BeautifulSoup
-import urllib
-import urllib.request
-import sys
-
-headers = {}
-headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36"
-url = "https://blast.ncbi.nlm.nih.gov/Blast.cgi"
-
-try:
-    request = urllib.request.Request(url, headers = headers)
-    response = urllib.request.urlopen(request)
-    data = response.read().decode("utf-8")
-
-except Exception as e:
-    sys.exit("{}\nSearching blast.ncbi.nlm.nih.gov/Blast.cgi --> Q5QLK3\n", e)
-
-soup = BeautifulSoup(data, "html.parser")
-
-# # Ask for input --------------------------------------------------------------
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-import time
-
-program = values['-BLASTTYPE-']
-location = url + "?PROGRAM=" + program + "&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome"
-
-driver = webdriver.Firefox()
-driver.get(location)
-
-# Get information about the -QUERY-
-inputquery = values['-QUERY-']
-# inputfile = values['--'] browse doesn't work yet
-query = driver.find_element(By.ID, "seq")
-query.send_keys(inputquery)
-
-# Get information about the -JOBTITLE-
-inputjobtitle = values['-JOBTITLE-']
-jobtitle = driver.find_element(By.NAME, "JOB_TITLE")
-jobtitle.send_keys(inputjobtitle)
-
-# Get information about the -DB-
-inputdatabase = values['-DB-']
-database = driver.find_element(By.NAME, "DATABASE")
-database.send_keys(inputdatabase)
-
-# # Click on the BLAST Button
-# Algorithmbutton = driver.find_element(By.CLASS_NAME, "usa-accordion-button")
-# Algorithmbutton.click()
-
-# # Get information about the -MAXTS-
-# inputmax = values['-MAXTS-']
-# max = driver.find_element(By.NAME, "MAX_NUM_SEQ")
-# max.send_keys(inputmax)
-
-# # Get information about the -THRESHOLD-
-# inputthreshold = values['-THRESHOLD-']
-# threshold = driver.find_element(By.NAME, "EXPECT")
-# threshold.send_keys(inputthreshold)
-
-# Click on the BLAST Button
-blast = driver.find_element(By.CLASS_NAME, "blastbutton")
-blast.click()
-#=============================================================================
-#=============================================================================
-#=============================================================================
