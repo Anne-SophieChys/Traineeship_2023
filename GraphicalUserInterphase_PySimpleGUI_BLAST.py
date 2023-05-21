@@ -109,9 +109,13 @@ style = Style()
 
 # Create the layouts ---------------------------------------------------------
 # Define the layout of the introduction tab 
-intro_layout = [[sg.Text('Introduction', font='AnyFont 12 bold')],
-                [sg.Text('This application can be used...')],
-                [sg.Image(size=(180,80), key='-IMAGE-', pad=(10,10))]]
+intro_layout_column = [[sg.Text('Welcome to', font='AnyFont 30 bold', size=(105,None), justification=CENTER)],
+                       [sg.Text('ANSO', font='AnyFont 20')],
+                       [sg.Text('Alignment Navigated Sequence Organizer', font='AnyFont 15')],
+                       [sg.Text('This application can be used...')],
+                       [sg.Image(size=(180,80), key='-IMAGE-', pad=(10,10))],
+                       [sg.Button('Get started', font='AnyFont 16 bold', key='-GET_STARTED-')]]
+intro_layout = [[sg.Column(intro_layout_column, element_justification='center')]]
 
 # Define the layout of the blast tab
 blast_layout = [[sg.Text('BLAST (Basic Local Alignment Search Tool) is \
@@ -137,8 +141,9 @@ size=(105,None), expand_x=True)],
 
                 [sg.Text('Or, upload file', font='AnyFont 9 bold'),
                 sg.VSeparator(),
-                sg.FileBrowse(),
-                sg.Input(key='-INFILE-', border_width=0, background_color='#9FB8AD')],
+                sg.FileBrowse(key='-BROWSE-'),
+                sg.Input(enable_events=True, key='-INFILE-', border_width=0, background_color='#9FB8AD',
+                         font='Anyfont 12 bold')],
                 
                 [sg.Text('Job Title\t          ', font='AnyFont 9 bold'),
                  sg.VSeparator(),
@@ -185,15 +190,15 @@ layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
                             font='Courier 15', tearoff=True)],
           [sg.Text('BLAST',
                    justification='center', font='AnyFont 20 bold',
-                   relief=sg.RELIEF_RAISED, k='-TEXT HEADING-',
+                   relief=sg.RELIEF_RAISED,
                    enable_events=True, expand_x=True)],
 
           [sg.Column(
                 [[sg.TabGroup(
                     [[sg.Tab('Introduction', intro_layout),
-                      sg.Tab('BLAST', blast_layout),
-                      sg.Tab('MSA', msa_layout)]],
-                      size=(750,800), expand_y=True
+                      sg.Tab('BLAST', blast_layout, key='-BLAST_TAB-'),
+                      sg.Tab('MSA', msa_layout, key='-MSA_TAB-')]],
+                      size=(750,800), expand_y=True, key='-TABGROUP-'
                 )]], sbar_relief=sg.RELIEF_RAISED),
 
           sg.Column(
@@ -225,16 +230,35 @@ window['-IMAGE-'].update(data=image)
 while True:
     event, values = window.read(timeout=100)
 
-    # Log
+    # Log every interaction with the Graphical User Interphase
     if event not in (sg.TIMEOUT_EVENT, sg.WIN_CLOSED):
         print('=========== Event = ', event, ' ============ ')
         print('----- Values Directory (key=value) -----')
         for key in values:
             print(key, ' = ', values[key])
-
+    
     if event in (None, 'Exit'):
         print("[LOG] Clicked on 'Exit'")
 
+        
+
+        break
+
+    if event == 'About':
+        print("[LOG] Clicked on 'About'")
+        sg.popup('This is what happens when you \'click\' on About',
+                    'Programming Luanguage :: Python v3.10.10',
+                    'Application :: PySimpleGUI v4.60.4',
+                    'url :: \"https://github.com/PySimpleGUI/PySimpleGUI\"',
+                    keep_on_top=True)
+    
+    if event == "-BROWSE-":
+        print("[LOG] Browsed after file")
+        selected_file = values['-BROWSE-']
+        window['-INFILE-'].update(selected_file)
+    
+    if event == "BLAST":
+        print("[LOG] Clicked 'BLAST'")
         # Ask for input --------------------------------------------------------------
         from selenium import webdriver
         from selenium.webdriver.common.by import By
@@ -278,26 +302,5 @@ while True:
         # Click on the BLAST Button
         blast = driver.find_element(By.CLASS_NAME, "blastbutton")
         blast.click()
-
-
-        break
-
-    if event == 'About':
-        print("[LOG] Clicked on 'About'")
-        sg.popup('This is what happens when you \'click\' on About',
-                    'Programming Luanguage :: Python v3.10.10',
-                    'Application :: PySimpleGUI v4.60.4',
-                    'url :: \"https://github.com/PySimpleGUI/PySimpleGUI\"',
-                    keep_on_top=True)
-            
-    # if event == "Browse":
-    #     print("[LOG] Clicked 'Browse'")
-    #     selected_file = values['-BROWSEFILE-']
-    #     if selected_file:
-    #         file_name = selected_file.split('/')[-1]
-    #         window['-BROWSEFILE-'].update(file_name)
-    
-    if event == "Submit":
-        print("[LOG] Clicked 'Submit'")
 
 window.close()
