@@ -23,6 +23,11 @@ size = (120,80)
 im = Image.open(image_path)
 im = im.resize(size, resample=Image.BICUBIC)
 
+image2_path = os.path.join(script_dir, "ANSO2.png")
+size = (312,248)
+im2 = Image.open(image2_path)
+im2 = im2.resize(size, resample=Image.BICUBIC)
+
 #=============================================================================
 #========================= BLAST Settings ====================================
 #=============================================================================
@@ -109,11 +114,19 @@ style = Style()
 
 # Create the layouts ---------------------------------------------------------
 # Define the layout of the introduction tab 
-intro_layout_column = [[sg.Text('Welcome to', font='AnyFont 30 bold', size=(105,None), justification=CENTER)],
-                       [sg.Text('ANSO', font='AnyFont 20')],
+intro_layout_column = [[sg.Image(size=(312.6,248.1), key='-IMAGE2-', pad=(10,10))],
+    [sg.Text('Welcome to ANSO', font='AnyFont 30 bold', size=(105,None), justification=CENTER)],
                        [sg.Text('Alignment Navigated Sequence Organizer', font='AnyFont 15')],
-                       [sg.Text('This application can be used...')],
-                       [sg.Image(size=(180,80), key='-IMAGE-', pad=(10,10))],
+                       
+                       [sg.Text("This application is a versatile bioinformatics tool designed to streamline sequence analysis tasks.\
+With ANSO, you have the flexibility to perform various essential functions such as BLAST, Multiple \
+Sequence Alignment (MSA), and visualization of phylogenetic trees based on neighborhood analysis. \
+Whether you need to quickly search for similar sequences, align multiple sequences for comparizon, \
+or explore the evolutionary relationships among sequences, ANSO provides a user-friendly interfase \
+to carry out these tasks efficiently. The modular design of ANSO allows you to utilize each tool \
+independently or seamlessly integrated them together, enabling a seamless and comprehensive sequence \
+analysis workflow.", font='AnyFont 9', size=(103, None), justification='center')],
+                       [sg.Image(size=(120,80), key='-IMAGE-', pad=(10,10))],
                        [sg.Button('Get started', font='AnyFont 16 bold', key='-GET_STARTED-')]]
 intro_layout = [[sg.Column(intro_layout_column, element_justification='center')]]
 
@@ -172,18 +185,24 @@ size=(105,None), expand_x=True)],
                  sg.VSeparator(),
                  sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
 
-                [sg.Button('BLAST')]
+                [sg.Button('BLAST')],
+                [sg.Text('\n\n\n')],
+                [sg.Button('< Back'), sg.Text('\t\t\t\t\t\t\t\t\t\t     '), sg.Button('Next >')]
                 ]
 
 # Define the layout of the MSA tab
 msa_layout = [[sg.Text('This is the MSA layout')]]
+
+# Define the layout of the MSA tab
+tree_layout = [[sg.Text('This is the Tree layout')]]
 
 # Define the layout of the log tab
 log_layout = [[sg.Multiline(size=(100,20), font='Courier 8',
                             write_only=True,
                             reroute_stdout=True, reroute_stderr=True,
                             echo_stdout_stderr=True, autoscroll=True,
-                            auto_refresh=True)]]
+                            auto_refresh=True)],
+              [sg.Button('Exit')]]
                             
 # Create the main layout -------------------------------------------------
 layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
@@ -195,9 +214,10 @@ layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
 
           [sg.Column(
                 [[sg.TabGroup(
-                    [[sg.Tab('Introduction', intro_layout),
+                    [[sg.Tab('Start', intro_layout),
                       sg.Tab('BLAST', blast_layout, key='-BLAST_TAB-'),
-                      sg.Tab('MSA', msa_layout, key='-MSA_TAB-')]],
+                      sg.Tab('MSA', msa_layout, key='-MSA_TAB-'),
+                      sg.Tab('Tree', tree_layout, key='-TREE_TAB-')]],
                       size=(750,800), expand_y=True, key='-TABGROUP-'
                 )]], sbar_relief=sg.RELIEF_RAISED),
 
@@ -224,8 +244,16 @@ window = sg.Window('Graphical User Interphase', layout,
     
 # Convert im to ImageTK.PhotoImage after window finalized
 image = ImageTk.PhotoImage(image=im)
-window['-IMAGE-'].update(data=image)
+image2 = ImageTk.PhotoImage(image=im2)
 
+window['-IMAGE-'].update(data=image)
+window['-IMAGE2-'].update(data=image2)
+
+##############################################################################
+##############################################################################
+#                                Event loop                                  #
+##############################################################################
+##############################################################################
 # Event loop -------------------------------------------------------------
 while True:
     event, values = window.read(timeout=100)
@@ -239,9 +267,6 @@ while True:
     
     if event in (None, 'Exit'):
         print("[LOG] Clicked on 'Exit'")
-
-        
-
         break
 
     if event == 'About':
@@ -252,6 +277,15 @@ while True:
                     'url :: \"https://github.com/PySimpleGUI/PySimpleGUI\"',
                     keep_on_top=True)
     
+    if event == "-GET_STARTED-":
+        print("[LOG] Get started")
+
+        window['-BLAST_TAB-'].select()
+    
+    if event == "":
+        print("[LOG] Go back")
+        
+
     if event == "-BROWSE-":
         print("[LOG] Browsed after file")
         selected_file = values['-BROWSE-']
