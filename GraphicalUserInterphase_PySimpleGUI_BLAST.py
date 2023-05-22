@@ -18,15 +18,25 @@ import os
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Construct the path to the image file
-image_path = os.path.join(script_dir, "Biopython_logo.png")
+imageBioPython_path = os.path.join(script_dir, "./Brand/Biopython_logo.png")
 size = (120,80)
-im = Image.open(image_path)
+im = Image.open(imageBioPython_path)
 im = im.resize(size, resample=Image.BICUBIC)
 
-image2_path = os.path.join(script_dir, "ANSO2.png")
-size = (312,248)
-im2 = Image.open(image2_path)
+imageANSO_path = os.path.join(script_dir, "./Brand/ANSO.png")
+size = (260,206)
+im2 = Image.open(imageANSO_path)
 im2 = im2.resize(size, resample=Image.BICUBIC)
+
+imageNCBI_BLAST_path = os.path.join(script_dir, "./Brand/NCBI_BLAST.png")
+size = (50,71)
+im3 = Image.open(imageNCBI_BLAST_path)
+im3 = im3.resize(size, resample=Image.BICUBIC)
+
+imageClustalOmega_path = os.path.join(script_dir, "./Brand/ClustalOmega.png")
+size = (100,100)
+im4 = Image.open(imageClustalOmega_path)
+im4 = im4.resize(size, resample=Image.BICUBIC)
 
 #=============================================================================
 #========================= BLAST Settings ====================================
@@ -60,7 +70,6 @@ soup = BeautifulSoup(data, "html.parser")
 ##################
 ##################
 import tkinter.filedialog
-
 from tkinter.ttk import Style
 from tkinter import *
 
@@ -112,12 +121,11 @@ style = Style()
 
 
 
-# Create the layouts ---------------------------------------------------------
+# Create the layouts -------------------------------------------------------------
 # Define the layout of the introduction tab 
-intro_layout_column = [[sg.Image(size=(312.6,248.1), key='-IMAGE2-', pad=(10,10))],
-    [sg.Text('Welcome to ANSO', font='AnyFont 30 bold', size=(105,None), justification=CENTER)],
-                       [sg.Text('Alignment Navigated Sequence Organizer', font='AnyFont 15')],
-                       
+intro_layout_column = [[sg.Text('Welcome to ANSO', font='AnyFont 25 bold', size=(105,None), justification=CENTER)],
+                       [sg.Image(size=(260,206), key='-IMAGE2-', pad=(10,10))],
+                       [sg.Text('Alignment Navigated Sequence Organizer', font='AnyFont 20')],
                        [sg.Text("This application is a versatile bioinformatics tool designed to streamline sequence analysis tasks.\
 With ANSO, you have the flexibility to perform various essential functions such as BLAST, Multiple \
 Sequence Alignment (MSA), and visualization of phylogenetic trees based on neighborhood analysis. \
@@ -131,16 +139,15 @@ analysis workflow.", font='AnyFont 9', size=(103, None), justification='center')
 intro_layout = [[sg.Column(intro_layout_column, element_justification='center')]]
 
 # Define the layout of the blast tab
-blast_layout = [[sg.Text('BLAST (Basic Local Alignment Search Tool) is \
-a widely used bioinformatics algorithm and software tool for sequence \
-similarity searching. It is performed to compare a query sequence against \
-a database of known sequences to identify similar sequences and infer \
-functional or evolutionary relationships.\n\nThe main purpose of performing \
-a BLAST search is to determine the similarity between a query sequence and \
-sequences in a database. BLAST uses an algorithm that rapidly aligns the \
-query sequence with sequences in the database and calculates a similarity \
-score. This score indicates the degree of sequence similarity or homology \
-between the query and database sequences.',
+blast_layout = [[sg.Text('Basic Local Alignment Search Tool (BLAST)', font='AnyFont 18'),
+                 sg.Image(size=(100,142), key='-IMAGE3-')],
+                [sg.Text('BLAST is a widely used bioinformatics algorithm and software tool for \
+sequence similarity searching. It is performed to compare a query sequence against a database of \
+known sequences to identify similar sequences and infer functional or evolutionary relationships.\
+\n\nThe main purpose of performing a BLAST search is to determine the similarity between a query \
+sequence and sequences in a database. BLAST uses an algorithm that rapidly aligns the query \
+sequence with sequences in the database and calculates a similarity score. This score indicates \
+the degree of sequence similarity or homology between the query and database sequences.',
 size=(105,None), expand_x=True)],
                 [sg.Text('Program Selection', font='AnyFont 12 bold')],
                 [sg.Combo(values=('blastn', 'blastp', 'blastx', 'tblastn', 'tblastx'),
@@ -186,25 +193,31 @@ size=(105,None), expand_x=True)],
                  sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
 
                 [sg.Button('BLAST')],
-                [sg.Text('\n\n\n')],
+                [sg.Text('\n')],
                 [sg.Button('< Back'), sg.Text('\t\t\t\t\t\t\t\t\t\t     '), sg.Button('Next >')]
                 ]
 
 # Define the layout of the MSA tab
-msa_layout = [[sg.Text('This is the MSA layout')]]
+msa_layout = [[sg.Text('Multiple Sequence Alignment (MSA)', font='AnyFont 15'), sg.Image(size=(100,100), key='-IMAGE4-')],
+              [sg.Text('The Multiple Sequence Alignment (MSA) tool in ANSO harnesses the power \
+of the online Clustal Omega algorithm to perform accurate and efficient sequence alignments. By \
+leveraging the Clustal Omega tool, ANSO ensures that your sequences are aligned with precision, \
+considering both sequence conservation and structural compatibility.', size=(105,None))],
+              [sg.Button('< Back'), sg.Text('\t\t\t\t\t\t\t\t\t\t     '), sg.Button('Next >')]]
 
 # Define the layout of the MSA tab
-tree_layout = [[sg.Text('This is the Tree layout')]]
+tree_layout = [[sg.Text('This is the Tree layout')],
+               [sg.Button('< Back')]]
 
 # Define the layout of the log tab
-log_layout = [[sg.Multiline(size=(100,20), font='Courier 8',
+log_layout = [[sg.Multiline(size=(100,10), font='Courier 8',
                             write_only=True,
                             reroute_stdout=True, reroute_stderr=True,
                             echo_stdout_stderr=True, autoscroll=True,
                             auto_refresh=True)],
               [sg.Button('Exit')]]
                             
-# Create the main layout -------------------------------------------------
+# Create the main layout -----------------------------------------------------
 layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
                             font='Courier 15', tearoff=True)],
           [sg.Text('BLAST',
@@ -214,7 +227,7 @@ layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
 
           [sg.Column(
                 [[sg.TabGroup(
-                    [[sg.Tab('Start', intro_layout),
+                    [[sg.Tab('Start', intro_layout, key='-START_TAB-'),
                       sg.Tab('BLAST', blast_layout, key='-BLAST_TAB-'),
                       sg.Tab('MSA', msa_layout, key='-MSA_TAB-'),
                       sg.Tab('Tree', tree_layout, key='-TREE_TAB-')]],
@@ -236,7 +249,7 @@ layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
 def main():
     make_window(sg.theme('LightBrown2'))
 
-# Create the window ------------------------------------------------------
+# Create the window ----------------------------------------------------------
 window = sg.Window('Graphical User Interphase', layout,
                    grab_anywhere=True,
                    size=(1400,800), use_custom_titlebar=True,
@@ -245,16 +258,24 @@ window = sg.Window('Graphical User Interphase', layout,
 # Convert im to ImageTK.PhotoImage after window finalized
 image = ImageTk.PhotoImage(image=im)
 image2 = ImageTk.PhotoImage(image=im2)
+image3 = ImageTk.PhotoImage(image=im3)
+image4 = ImageTk.PhotoImage(image=im4)
 
 window['-IMAGE-'].update(data=image)
 window['-IMAGE2-'].update(data=image2)
+window['-IMAGE3-'].update(data=image3)
+window['-IMAGE4-'].update(data=image4)
 
 ##############################################################################
 ##############################################################################
 #                                Event loop                                  #
 ##############################################################################
 ##############################################################################
-# Event loop -------------------------------------------------------------
+# switching between the tabs with "< Back", and "Next >"
+countingtab = 1
+taborder = ['-START_TAB', '-BLAST_TAB-', '-MSA_TAB-', '-TREE_TAB-']
+                             
+# Event loop -----------------------------------------------------------------
 while True:
     event, values = window.read(timeout=100)
 
@@ -279,12 +300,18 @@ while True:
     
     if event == "-GET_STARTED-":
         print("[LOG] Get started")
-
         window['-BLAST_TAB-'].select()
+        countingtab =+ 1
     
-    if event == "":
-        print("[LOG] Go back")
-        
+    if event == "< Back":
+        print("[LOG] Went to previous tab")
+        countingtab =- 1
+
+
+    if event == "Next >":
+        print("[LOG] Went to the next tab")
+        countingtab =+ 1
+
 
     if event == "-BROWSE-":
         print("[LOG] Browsed after file")
@@ -296,6 +323,9 @@ while True:
         # Ask for input --------------------------------------------------------------
         from selenium import webdriver
         from selenium.webdriver.common.by import By
+        from selenium.common.exceptions import TimeoutException
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
 
         program = values['-BLASTTYPE-']
         location = url + "?PROGRAM=" + program + "&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome"
@@ -336,5 +366,30 @@ while True:
         # Click on the BLAST Button
         blast = driver.find_element(By.CLASS_NAME, "blastbutton")
         blast.click()
+        print('Blast has started')
 
+        max_wait_time = 80
+        update_interval = 5
+
+        wait = WebDriverWait(driver, update_interval)
+
+        try:
+            driver.find_element(By.ID, "type-a")
+            wait.until(EC.staleness_of(driver.find_element(By.ID, "type-a")))
+        except:
+            print('The server access is minimal, try again later...')
+            pass
+
+        while max_wait_time > 0:
+            try:
+                download_button = wait.until(EC.element_to_be_clickable((By.ID, "btnDwnld")))
+                download_button.click()
+                print("clicked download button")
+                download_button2 = driver.find_element(By.ID, 'dwFST')
+                download_button2.click()
+                break
+            except TimeoutException:
+                max_wait_time -= update_interval
+                continue
+            
 window.close()
