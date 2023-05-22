@@ -29,7 +29,7 @@ im2 = Image.open(imageANSO_path)
 im2 = im2.resize(size, resample=Image.BICUBIC)
 
 imageNCBI_BLAST_path = os.path.join(script_dir, "./Brand/NCBI_BLAST.png")
-size = (50,71)
+size = (71,100)
 im3 = Image.open(imageNCBI_BLAST_path)
 im3 = im3.resize(size, resample=Image.BICUBIC)
 
@@ -81,24 +81,24 @@ sg.change_look_and_feel('GreenTan')
 ##############################################################################
 ##############################################################################
 # Function code for building the database
-def make_db():
-    def select_fadb_button_cmd():
-        global fndb
-        fndb = tkinter.filedialog.askopenfilename()
-        make_db_label.config(text="The files you selected:\n" + fndb)
+# def make_db():
+#     def select_fadb_button_cmd():
+#         global fndb
+#         fndb = tkinter.filedialog.askopenfilename()
+#         make_db_label.config(text="The files you selected:\n" + fndb)
 
-    dbwindow = Tk()
+#     dbwindow = Tk()
 
-    style.configure('Tmake_db_label.TLabel', anchor='center', font=('', 13))
-    make_db_label = Label(dbwindow, text='You did not select any files', style='Tmake_db_label.TLabel')
-    make_db_label.place(relx=0.041, rely=0.048, relwidth=0.602, relheight=0.105)
+#     style.configure('Tmake_db_label.TLabel', anchor='center', font=('', 13))
+#     make_db_label = Label(dbwindow, text='You did not select any files', style='Tmake_db_label.TLabel')
+#     make_db_label.place(relx=0.041, rely=0.048, relwidth=0.602, relheight=0.105)
 
-    style.configure('Tselect_file_button.TButton')
-    select_file_button = Button(text='Select \n file',
-                            command = select_fadb_button_cmd,
-                            style='Tselect_file_button.TButton')
-    select_file_button(relx=0.692, rely=0.015, relwidth=0.09, relheight=0.138)
-    dbwindow.mainloop()    
+#     style.configure('Tselect_file_button.TButton')
+#     select_file_button = Button(text='Select \n file',
+#                             command = select_fadb_button_cmd,
+#                             style='Tselect_file_button.TButton')
+#     select_file_button(relx=0.692, rely=0.015, relwidth=0.09, relheight=0.138)
+#     dbwindow.mainloop()    
 
 ##############################################################################
 ##############################################################################
@@ -139,8 +139,10 @@ analysis workflow.", font='AnyFont 9', size=(103, None), justification='center')
 intro_layout = [[sg.Column(intro_layout_column, element_justification='center')]]
 
 # Define the layout of the blast tab
-blast_layout = [[sg.Text('Basic Local Alignment Search Tool (BLAST)', font='AnyFont 18'),
-                 sg.Image(size=(100,142), key='-IMAGE3-')],
+blast_layout = [[sg.Image(size=(100,142), key='-IMAGE3-'),
+                 sg.VSeparator(),
+                 sg.Text('       Basic Local Alignment Search Tool (BLAST)', font='AnyFont 18')
+                 ],
                 [sg.Text('BLAST is a widely used bioinformatics algorithm and software tool for \
 sequence similarity searching. It is performed to compare a query sequence against a database of \
 known sequences to identify similar sequences and infer functional or evolutionary relationships.\
@@ -149,8 +151,8 @@ sequence and sequences in a database. BLAST uses an algorithm that rapidly align
 sequence with sequences in the database and calculates a similarity score. This score indicates \
 the degree of sequence similarity or homology between the query and database sequences.',
 size=(105,None), expand_x=True)],
-                [sg.Text('Program Selection', font='AnyFont 12 bold')],
-                [sg.Combo(values=('blastn', 'blastp', 'blastx', 'tblastn', 'tblastx'),
+                [sg.Text('Select the program settings: '),
+                sg.Combo(values=('blastn', 'blastp', 'blastx', 'tblastn', 'tblastx'),
                           default_value='blastn',
                           readonly=True,
                           key='-BLASTTYPE-')],
@@ -193,12 +195,13 @@ size=(105,None), expand_x=True)],
                  sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
 
                 [sg.Button('BLAST')],
-                [sg.Text('\n')],
                 [sg.Button('< Back'), sg.Text('\t\t\t\t\t\t\t\t\t\t     '), sg.Button('Next >')]
                 ]
 
 # Define the layout of the MSA tab
-msa_layout = [[sg.Text('Multiple Sequence Alignment (MSA)', font='AnyFont 15'), sg.Image(size=(100,100), key='-IMAGE4-')],
+msa_layout = [[sg.Image(size=(100,100), key='-IMAGE4-'),
+               sg.VSeparator(),
+               sg.Text('       Multiple Sequence Alignment (MSA)', font='AnyFont 18')],
               [sg.Text('The Multiple Sequence Alignment (MSA) tool in ANSO harnesses the power \
 of the online Clustal Omega algorithm to perform accurate and efficient sequence alignments. By \
 leveraging the Clustal Omega tool, ANSO ensures that your sequences are aligned with precision, \
@@ -253,7 +256,7 @@ def main():
 window = sg.Window('Graphical User Interphase', layout,
                    grab_anywhere=True,
                    size=(1400,800), use_custom_titlebar=True,
-                   finalize=True, keep_on_top=True)
+                   finalize=True, keep_on_top=False)            # SET THIS ON TRUE AGAIN IF THE BLAST
     
 # Convert im to ImageTK.PhotoImage after window finalized
 image = ImageTk.PhotoImage(image=im)
@@ -330,7 +333,7 @@ while True:
         program = values['-BLASTTYPE-']
         location = url + "?PROGRAM=" + program + "&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome"
 
-        driver = webdriver.Firefox()
+        driver = (webdriver.Firefox())
         driver.get(location)
 
         # Get information about the -QUERY-
@@ -349,18 +352,18 @@ while True:
         database = driver.find_element(By.NAME, "DATABASE")
         database.send_keys(inputdatabase)
 
-        # # Click on the BLAST Button
-        # Algorithmbutton = driver.find_element(By.CLASS_NAME, "usa-accordion-button")
-        # Algorithmbutton.click()
+        # Click on the BLAST Button
+        Algorithmbutton = driver.find_element(By.ID, "btnDescrOver")
+        Algorithmbutton.click()
 
         # # Get information about the -MAXTS-
         # inputmax = values['-MAXTS-']
-        # max = driver.find_element(By.NAME, "MAX_NUM_SEQ")
+        # max = driver.find_element(By.ID, "NUM_SEQ")
         # max.send_keys(inputmax)
 
         # # Get information about the -THRESHOLD-
         # inputthreshold = values['-THRESHOLD-']
-        # threshold = driver.find_element(By.NAME, "EXPECT")
+        # threshold = driver.find_element(By.ID, "expect")
         # threshold.send_keys(inputthreshold)
 
         # Click on the BLAST Button
@@ -377,7 +380,7 @@ while True:
             driver.find_element(By.ID, "type-a")
             wait.until(EC.staleness_of(driver.find_element(By.ID, "type-a")))
         except:
-            print('The server access is minimal, try again later...')
+            print('There went something wrong, try again later...')
             pass
 
         while max_wait_time > 0:
@@ -391,5 +394,5 @@ while True:
             except TimeoutException:
                 max_wait_time -= update_interval
                 continue
-            
+
 window.close()
