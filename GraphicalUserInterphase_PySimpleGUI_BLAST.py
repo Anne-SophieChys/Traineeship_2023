@@ -11,6 +11,8 @@
 import PySimpleGUI as sg
 from PIL import Image, ImageTk
 import os
+import time
+
 
 
 # Navigations ################################################################
@@ -194,7 +196,8 @@ size=(105,None), expand_x=True)],
                  sg.VSeparator(),
                  sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
 
-                [sg.Button('BLAST', font='AnyFont, 15')],
+                [sg.Text('\t\t\t\t'),
+                 sg.Button('BLAST', font='AnyFont, 15')],
                 [sg.Text('\n\n\n\n')],
 
                 [sg.Button('< Back', font='AnyFont, 10', key='-B1-'),
@@ -228,7 +231,7 @@ log_layout = [[sg.Text('Output', font='AnyFont 18')],
                             reroute_stdout=True, reroute_stderr=True,
                             echo_stdout_stderr=True, autoscroll=True,
                             auto_refresh=True)],
-              [sg.Text('\n\n\n\t\t\t\t\t\t'),sg.Button('Exit', font='AnyFont, 12')]]
+              [sg.Text('\n\n\n\t\t\t\t\t      '),sg.Button('Exit', font='AnyFont, 12')]]
                             
 # Create the main layout -----------------------------------------------------
 layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
@@ -325,7 +328,7 @@ while True:
     if event == "-B3-":
         print("[LOG Went back to the MSA page]")
         window['-MSA_TAB-'].select()
-
+    # Buttons --------------------------------------------------------------------------
 
     if event == "-BROWSE-":
         print("[LOG] Browsed after file")
@@ -334,6 +337,7 @@ while True:
     
     if event == "BLAST":
         print("[LOG] Clicked 'BLAST'")
+
         # Ask for input --------------------------------------------------------------
         from selenium import webdriver
         from selenium.webdriver.common.by import By
@@ -344,7 +348,7 @@ while True:
         program = values['-BLASTTYPE-']
         location = url + "?PROGRAM=" + program + "&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome"
 
-        driver = (webdriver.Firefox()).set_window_size(50,50)
+        driver = (webdriver.Firefox())
         driver.get(location)
 
         # Get information about the -QUERY-
@@ -382,7 +386,7 @@ while True:
         blast.click()
         print('Blast has started')
 
-        max_wait_time = 80
+        max_wait_time = 99999
         update_interval = 5
 
         wait = WebDriverWait(driver, update_interval)
