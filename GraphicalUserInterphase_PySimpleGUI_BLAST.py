@@ -19,12 +19,12 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Construct the path to the image file
 imageBioPython_path = os.path.join(script_dir, "./Brand/Biopython_logo.png")
-size = (120,80)
+size = (180,120)
 im = Image.open(imageBioPython_path)
 im = im.resize(size, resample=Image.BICUBIC)
 
-imageANSO_path = os.path.join(script_dir, "./Brand/ANSO.png")
-size = (260,206)
+imageANSO_path = os.path.join(script_dir, "./Brand/AlignmentNavigatedSearchOrganizer.png")
+size = (415,225)
 im2 = Image.open(imageANSO_path)
 im2 = im2.resize(size, resample=Image.BICUBIC)
 
@@ -81,24 +81,24 @@ sg.change_look_and_feel('GreenTan')
 ##############################################################################
 ##############################################################################
 # Function code for building the database
-# def make_db():
-#     def select_fadb_button_cmd():
-#         global fndb
-#         fndb = tkinter.filedialog.askopenfilename()
-#         make_db_label.config(text="The files you selected:\n" + fndb)
+def make_db():
+    def select_fadb_button_cmd():
+        global fndb
+        fndb = tkinter.filedialog.askopenfilename()
+        make_db_label.config(text="The files you selected:\n" + fndb)
 
-#     dbwindow = Tk()
+    dbwindow = Tk()
 
-#     style.configure('Tmake_db_label.TLabel', anchor='center', font=('', 13))
-#     make_db_label = Label(dbwindow, text='You did not select any files', style='Tmake_db_label.TLabel')
-#     make_db_label.place(relx=0.041, rely=0.048, relwidth=0.602, relheight=0.105)
+    style.configure('Tmake_db_label.TLabel', anchor='center', font=('', 13))
+    make_db_label = Label(dbwindow, text='You did not select any files', style='Tmake_db_label.TLabel')
+    make_db_label.place(relx=0.041, rely=0.048, relwidth=0.602, relheight=0.105)
 
-#     style.configure('Tselect_file_button.TButton')
-#     select_file_button = Button(text='Select \n file',
-#                             command = select_fadb_button_cmd,
-#                             style='Tselect_file_button.TButton')
-#     select_file_button(relx=0.692, rely=0.015, relwidth=0.09, relheight=0.138)
-#     dbwindow.mainloop()    
+    style.configure('Tselect_file_button.TButton')
+    select_file_button = Button(text='Select \n file',
+                            command = select_fadb_button_cmd,
+                            style='Tselect_file_button.TButton')
+    select_file_button(relx=0.692, rely=0.015, relwidth=0.09, relheight=0.138)
+    dbwindow.mainloop()    
 
 ##############################################################################
 ##############################################################################
@@ -135,8 +135,8 @@ to carry out these tasks efficiently. The modular design of ANSO allows you to u
 independently or seamlessly integrated them together, enabling a seamless and comprehensive sequence \
 analysis workflow.", font='AnyFont 9', size=(103, None), justification='center')],
                        [sg.Image(size=(120,80), key='-IMAGE-', pad=(10,10))],
-                       [sg.Button('Get started', font='AnyFont 16 bold', key='-GET_STARTED-')]]
-intro_layout = [[sg.Column(intro_layout_column, element_justification='center')]]
+                       [sg.Button('Get started', font='AnyFont 24 bold', key='-GET_STARTED-')]]
+intro_layout = [[sg.Column(intro_layout_column, element_justification='center', pad=(0,40))]]
 
 # Define the layout of the blast tab
 blast_layout = [[sg.Image(size=(100,142), key='-IMAGE3-'),
@@ -194,8 +194,12 @@ size=(105,None), expand_x=True)],
                  sg.VSeparator(),
                  sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
 
-                [sg.Button('BLAST')],
-                [sg.Button('< Back'), sg.Text('\t\t\t\t\t\t\t\t\t\t     '), sg.Button('Next >')]
+                [sg.Button('BLAST', font='AnyFont, 15')],
+                [sg.Text('\n\n\n\n')],
+
+                [sg.Button('< Back', font='AnyFont, 10', key='-B1-'),
+                 sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
+                 sg.Button('Next >', font='AnyFont, 10', key='-N1-')]
                 ]
 
 # Define the layout of the MSA tab
@@ -206,35 +210,41 @@ msa_layout = [[sg.Image(size=(100,100), key='-IMAGE4-'),
 of the online Clustal Omega algorithm to perform accurate and efficient sequence alignments. By \
 leveraging the Clustal Omega tool, ANSO ensures that your sequences are aligned with precision, \
 considering both sequence conservation and structural compatibility.', size=(105,None))],
-              [sg.Button('< Back'), sg.Text('\t\t\t\t\t\t\t\t\t\t     '), sg.Button('Next >')]]
+
+              [sg.Button('< Back', font='AnyFont, 10', key='-B2-'),
+               sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
+               sg.Button('Next >', font='AnyFont, 10', key='-N2-')]]
 
 # Define the layout of the MSA tab
 tree_layout = [[sg.Text('This is the Tree layout')],
-               [sg.Button('< Back')]]
+               [sg.Button('< Back', font='AnyFont, 10', key='-B3-')]]
 
 # Define the layout of the log tab
-log_layout = [[sg.Multiline(size=(100,10), font='Courier 8',
+log_layout = [[sg.Text('Output', font='AnyFont 18')],
+              [sg.Multiline(size=(115,30), font='Courier 8')],
+              [sg.Text('Event logging [LOG]', font='AnyFont 18')],
+              [sg.Multiline(size=(115,15), font='Courier 8',
                             write_only=True,
                             reroute_stdout=True, reroute_stderr=True,
                             echo_stdout_stderr=True, autoscroll=True,
                             auto_refresh=True)],
-              [sg.Button('Exit')]]
+              [sg.Text('\n\n\n\t\t\t\t\t\t'),sg.Button('Exit', font='AnyFont, 12')]]
                             
 # Create the main layout -----------------------------------------------------
 layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
                             font='Courier 15', tearoff=True)],
-          [sg.Text('BLAST',
+          [sg.Text('Alignment Navigated Search Organizer',
                    justification='center', font='AnyFont 20 bold',
                    relief=sg.RELIEF_RAISED,
                    enable_events=True, expand_x=True)],
 
           [sg.Column(
                 [[sg.TabGroup(
-                    [[sg.Tab('Start', intro_layout, key='-START_TAB-'),
+                    [[sg.Tab('START', intro_layout, key='-START_TAB-'),
                       sg.Tab('BLAST', blast_layout, key='-BLAST_TAB-'),
                       sg.Tab('MSA', msa_layout, key='-MSA_TAB-'),
-                      sg.Tab('Tree', tree_layout, key='-TREE_TAB-')]],
-                      size=(750,800), expand_y=True, key='-TABGROUP-'
+                      sg.Tab('TREE', tree_layout, key='-TREE_TAB-')]],
+                      size=(750,900), expand_y=True, key='-TABGROUP-'
                 )]], sbar_relief=sg.RELIEF_RAISED),
 
           sg.Column(
@@ -255,8 +265,8 @@ def main():
 # Create the window ----------------------------------------------------------
 window = sg.Window('Graphical User Interphase', layout,
                    grab_anywhere=True,
-                   size=(1400,800), use_custom_titlebar=True,
-                   finalize=True, keep_on_top=False)            # SET THIS ON TRUE AGAIN IF THE BLAST
+                   size=(1500,900), use_custom_titlebar=True,
+                   finalize=True, keep_on_top=True)            # SET THIS ON TRUE AGAIN IF THE BLAST
     
 # Convert im to ImageTK.PhotoImage after window finalized
 image = ImageTk.PhotoImage(image=im)
@@ -273,12 +283,7 @@ window['-IMAGE4-'].update(data=image4)
 ##############################################################################
 #                                Event loop                                  #
 ##############################################################################
-##############################################################################
-# switching between the tabs with "< Back", and "Next >"
-countingtab = 1
-taborder = ['-START_TAB', '-BLAST_TAB-', '-MSA_TAB-', '-TREE_TAB-']
-                             
-# Event loop -----------------------------------------------------------------
+##############################################################################    
 while True:
     event, values = window.read(timeout=100)
 
@@ -301,19 +306,25 @@ while True:
                     'url :: \"https://github.com/PySimpleGUI/PySimpleGUI\"',
                     keep_on_top=True)
     
+    # Buttons --------------------------------------------------------------------------
     if event == "-GET_STARTED-":
-        print("[LOG] Get started")
+        print("[LOG] Went to the BLAST page")
         window['-BLAST_TAB-'].select()
-        countingtab =+ 1
-    
-    if event == "< Back":
-        print("[LOG] Went to previous tab")
-        countingtab =- 1
-
-
-    if event == "Next >":
-        print("[LOG] Went to the next tab")
-        countingtab =+ 1
+    if event == "-B1-":
+        print("[LOG] Went back to the START page")
+        window['-START_TAB-'].select()
+    if event == "-N1-":
+        print("[LOG] Went to MSA page")
+        window['-MSA_TAB-'].select()
+    if event == "-B2-":
+        print("[LOG Went back to the BLAST page]")
+        window['-BLAST_TAB-'].select()
+    if event == "-N2-":
+        print("[LOG] Went to the TREE page")
+        window['-TREE_TAB-'].select()
+    if event == "-B3-":
+        print("[LOG Went back to the MSA page]")
+        window['-MSA_TAB-'].select()
 
 
     if event == "-BROWSE-":
@@ -333,7 +344,7 @@ while True:
         program = values['-BLASTTYPE-']
         location = url + "?PROGRAM=" + program + "&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome"
 
-        driver = (webdriver.Firefox())
+        driver = (webdriver.Firefox()).set_window_size(50,50)
         driver.get(location)
 
         # Get information about the -QUERY-
