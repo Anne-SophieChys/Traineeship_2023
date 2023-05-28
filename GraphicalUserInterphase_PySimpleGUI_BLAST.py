@@ -9,7 +9,7 @@
 # pip install pysimplegui (v4.60.4)
 # Load the packages ----------------------------------------------------------
 import PySimpleGUI as sg
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageSequence
 import os
 import time
 
@@ -196,9 +196,11 @@ size=(105,None), expand_x=True)],
                  sg.VSeparator(),
                  sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
 
-                [sg.Text('\t\t\t\t'),
+                [sg.Text('\t\t\t\t\t       '),
                  sg.Button('BLAST', font='AnyFont, 15')],
-                [sg.Text('\n\n\n\n')],
+                [sg.Text('\t\t\t\t\t          '),
+                 sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, key='-GIF1-',
+                          enable_events=True, visible=True)],
 
                 [sg.Button('< Back', font='AnyFont, 10', key='-B1-'),
                  sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
@@ -214,6 +216,19 @@ of the online Clustal Omega algorithm to perform accurate and efficient sequence
 leveraging the Clustal Omega tool, ANSO ensures that your sequences are aligned with precision, \
 considering both sequence conservation and structural compatibility.', size=(105,None))],
 
+              [sg.Text('General Setting Parameters', font='AnyFont 12 bold')],
+              [sg.Text('Output Format: '), sg.Combo(values=('CLUSTAL', 'GCG(MSF)', 'GDE', 'PIR', 'Phylip', 'FASTA'))],
+              [sg.Text('Pairwise Alignment: '), sg.Radio('FAST/APPROXIMATE', 'PA'), sg.Radio('SLOW/ACCURATE', 'PA')],
+              [sg.Text('Enter Query Sequences', font='AnyFont 12 bold'), sg.Radio('PROTEIN', 'typeseq'), sg.Radio('DNA', 'typeseq')],
+              [sg.Multiline(key= '-QUERYMSA-', size=(111,6))],
+              [sg.Text('Or, upload file', font='AnyFont 9 bold'), sg.FileBrowse(key='-BROWSE-')],
+
+              [sg.Text('\t\t\t\t\t  '),
+               sg.Button('Execute MSA', font='AnyFont, 15')],
+              [sg.Text('\t\t\t\t\t             '),
+               sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, key='-GIF1-',
+                        enable_events=True, visible=True)],
+
               [sg.Button('< Back', font='AnyFont, 10', key='-B2-'),
                sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
                sg.Button('Next >', font='AnyFont, 10', key='-N2-')]]
@@ -222,9 +237,9 @@ considering both sequence conservation and structural compatibility.', size=(105
 tree_layout = [[sg.Text('This is the Tree layout')],
                [sg.Button('< Back', font='AnyFont, 10', key='-B3-')]]
 
-# Define the layout of the log tab
+# Define the layout of the log tab and the output
 log_layout = [[sg.Text('Output', font='AnyFont 18')],
-              [sg.Multiline(size=(115,30), font='Courier 8')],
+              [sg.Multiline(size=(115,30), font='Courier 8', key='-OUTPUT-')],
               [sg.Text('Event logging [LOG]', font='AnyFont 18')],
               [sg.Multiline(size=(115,15), font='Courier 8',
                             write_only=True,
@@ -309,6 +324,12 @@ while True:
                     'url :: \"https://github.com/PySimpleGUI/PySimpleGUI\"',
                     keep_on_top=True)
     
+    # if event == 'Dark mode':
+    #     if sg.theme('LightBrown2'):
+    #         sg.theme('DarkBlue3')
+    #     else:
+    #         sg.theme('LightBrown2')
+    
     # Buttons --------------------------------------------------------------------------
     if event == "-GET_STARTED-":
         print("[LOG] Went to the BLAST page")
@@ -328,13 +349,12 @@ while True:
     if event == "-B3-":
         print("[LOG Went back to the MSA page]")
         window['-MSA_TAB-'].select()
-    # Buttons --------------------------------------------------------------------------
 
     if event == "-BROWSE-":
         print("[LOG] Browsed after file")
         selected_file = values['-BROWSE-']
         window['-INFILE-'].update(selected_file)
-    
+
     if event == "BLAST":
         print("[LOG] Clicked 'BLAST'")
 
@@ -363,28 +383,47 @@ while True:
         jobtitle.send_keys(inputjobtitle)
 
         # Get information about the -DB-
+        if values['-DB-'] == 'Reference proteins (refseq_protein)':
+            values['-DB-'] = 'RR'
+        if values['-DB-'] == 'Protein Data Bank proteins(pdb)':
+            values['-DB-'] = 'pp'
+
+        inputdatabasebutton = driver.find_element(By.ID, "DATABASE")
+        inputdatabasebutton.click()
         inputdatabase = values['-DB-']
-        database = driver.find_element(By.NAME, "DATABASE")
+        database = driver.find_element(By.ID, "DATABASE")
         database.send_keys(inputdatabase)
 
-        # Click on the BLAST Button
+        # Click on the drop down 'Algorithm paramters' Button
         Algorithmbutton = driver.find_element(By.ID, "btnDescrOver")
         Algorithmbutton.click()
 
-        # # Get information about the -MAXTS-
-        # inputmax = values['-MAXTS-']
-        # max = driver.find_element(By.ID, "NUM_SEQ")
-        # max.send_keys(inputmax)
+        # Get information about the -MAXTS-
+        if values['-MAXTS-'] == 10:
+            values['-MAXTS-'] = 11
+        if values['-MAXTS-'] == 50:
+            values['-MAXTS-'] = 555
+        if values['-MAXTS-'] == 100:
+            values['-MAXTS-'] = 111
+        if values['-MAXTS-'] == 5000:
+            values['-MAXTS-'] = 55
+           
+        inputmaxbutton = driver.find_element(By.ID, "NUM_SEQ")
+        inputmaxbutton.click()
+        inputmax = values['-MAXTS-']
+        max = driver.find_element(By.ID, "NUM_SEQ")
+        max.send_keys(inputmax)
 
-        # # Get information about the -THRESHOLD-
-        # inputthreshold = values['-THRESHOLD-']
-        # threshold = driver.find_element(By.ID, "expect")
-        # threshold.send_keys(inputthreshold)
+        # Get information about the -THRESHOLD-
+        inputthreshold = values['-THRESHOLD-']
+        threshold = driver.find_element(By.ID, "expect")
+        threshold.clear()
+        threshold.send_keys(inputthreshold)
 
         # Click on the BLAST Button
         blast = driver.find_element(By.CLASS_NAME, "blastbutton")
         blast.click()
-        print('Blast has started')
+        print('[LOG] Blast has started')
 
         max_wait_time = 99999
         update_interval = 5
@@ -402,12 +441,27 @@ while True:
             try:
                 download_button = wait.until(EC.element_to_be_clickable((By.ID, "btnDwnld")))
                 download_button.click()
-                print("clicked download button")
+                print("[LOG] Clicked on the Download button")
                 download_button2 = driver.find_element(By.ID, 'dwFST')
                 download_button2.click()
+                time.sleep(5)
+                print("[LOG] The file has been downloaded")
                 break
+            
             except TimeoutException:
                 max_wait_time -= update_interval
                 continue
+    
+    # # Check if the download file exists
+    # file_path = os.path('~/Download/seqdump.txt')
+
+    # if event == "Check File" and os.path.exists(file_path):
+    #     # Read the file content
+    #     with open(file_path, 'r') as file:
+    #         file_content = file.read()
+
+    #     # Update the Multiline element wit hthe file content
+    #     window['-OUTPUT-'].update(file_content)
+
 
 window.close()
