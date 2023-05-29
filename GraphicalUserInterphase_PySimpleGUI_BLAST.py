@@ -452,16 +452,12 @@ while True:
                 max_wait_time -= update_interval
                 continue
     
-    # # Check if the download file exists
-    # file_path = os.path('~/Download/seqdump.txt')
-
-    # if event == "Check File" and os.path.exists(file_path):
-    #     # Read the file content
-    #     with open(file_path, 'r') as file:
-    #         file_content = file.read()
-
-    #     # Update the Multiline element wit hthe file content
-    #     window['-OUTPUT-'].update(file_content)
+        # Display the output file
+        file_path = os.path.expanduser("~/Downloads/seqdump.txt")
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as file:
+                file_content = file.read()
+        window['-OUTPUT-'].update(file_content)
 
 
-window.close()
+# window.close()
