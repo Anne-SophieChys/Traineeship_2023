@@ -173,10 +173,11 @@ size=(105,None), expand_x=True)],
 
                 [sg.Text('Or, upload file', font='AnyFont 9 bold'),
                 sg.VSeparator(),
-                sg.FileBrowse(key='-BROWSE-'),
-                sg.Input(enable_events=True, key='-INFILE-', border_width=0, background_color='#9FB8AD',
-                         font='Anyfont 12 bold')],
-                
+                sg.Input(enable_events=True, key='-INFILE-', expand_x=True),
+                sg.FileBrowse()],
+
+
+
                 [sg.Text('Job Title\t          ', font='AnyFont 9 bold'),
                  sg.VSeparator(),
                  sg.Input(key='-JOBTITLE-', border_width=0)],
@@ -191,14 +192,15 @@ size=(105,None), expand_x=True)],
                                   'Patented protein sequences(pataa)',
                                   'Metagenomic proteins(env_nr)',
                                   'Transcriptome Shotgun Assembly proteins (tsa_nr)'),
-                         key='-DB-')],
+                         key='-DB-', readonly=True)],
                 
                 [sg.Text('Algorithm parameters', font='AnyFont 12 bold')],
                 [sg.Text('Max target \nsequences        ', font='AnyFont 9 bold'),
                  sg.VSeparator(),
                  sg.Combo(values=(10,50,100,200,250,500,1000,5000),
                           default_value='100',
-                          key='-MAXTS-')],
+                          key='-MAXTS-',
+                          readonly=True)],
 
                 [sg.Text('Threshold         ', font='AnyFont 9 bold'),
                  sg.VSeparator(),
@@ -228,13 +230,14 @@ considering both sequence conservation and structural compatibility.', size=(105
 
               [sg.Text('Type of sequence: '), 
                sg.Combo(values=('PROTEIN', 'DNA', 'RNA'), key='-TYPE2SEQ-', default_value='PROTEIN',
-                        size=(9,0), enable_events=True)],
+                        size=(9,0), enable_events=True, readonly=True)],
               [sg.Text('Enter Query Sequences', font='AnyFont 12 bold')],
               [sg.Text('Support Formats: FASTA, GCG, EMBL (Nucleotide only), GenBank, PIR/NBRF, PHILIP or UniProtKB/Swiss-Prot (Protein only)', font='AnyFont 9 bold')],
               [sg.Multiline(key= '-QUERYMSA-', size=(111,6))],
               [sg.Text('Or, upload file', font='AnyFont 9 bold'),
                sg.VSeparator(),
-               sg.FileBrowse(key='-BROWSE-')],
+               sg.Input(key='-FILENAMEMSA-', enable_events=True, expand_x=True, default_text="No file selected..."),
+               sg.FileBrowse()],
               
               [sg.HSeparator()],
               [sg.Text('Set parameters', font='AnyFont 12 bold')],
@@ -242,24 +245,24 @@ considering both sequence conservation and structural compatibility.', size=(105
                                                            'Pearson/FASTA', 'MSF', 'NEXUS', 'PHYLIP',
                                                            'SELEX', 'STOCKHOLM', 'VIENNA'),
                                                            default_value='ClustalW with character counts',
-                                                           key = '-OUTPUTMSA-')],
+                                                           key = '-OUTPUTMSA-', readonly=True)],
 
               [sg.Text('\nDealign Input Sequences     MBED-Like Clustering Guide-Tree\
      Max HMM Iterations                       Distance Matrix')],
-              [sg.Combo(values=('yes', 'no'), default_value='no', key='-DEALIGN-', size=(20,0)),
-               sg.Combo(values=('yes', 'no'), default_value='yes', key='-MBED-', size=(27,0)),
-               sg.Combo(values=('default', 0,1,2,3,4,5), default_value='default', key='-HMMITERATIONS-', size=(26,0)),
-               sg.Combo(values=('yes', 'no'), default_value='no', key='-DISMATOUT-', size=(20,0))],
+              [sg.Combo(values=('yes', 'no'), default_value='no', key='-DEALIGN-', size=(20,0), readonly=True),
+               sg.Combo(values=('yes', 'no'), default_value='yes', key='-MBED-', size=(27,0), readonly=True),
+               sg.Combo(values=('default', 0,1,2,3,4,5), default_value='default', key='-HMMITERATIONS-', size=(26,0), readonly=True),
+               sg.Combo(values=('yes', 'no'), default_value='no', key='-DISMATOUT-', size=(20,0), readonly=True)],
 
               [sg.Text('Max Guide Tree Iterations    MBED-Like Clustering Iteration\
          Number of Combined Iterations       Guide Tree')],
-              [sg.Combo(values=('default', 0,1,2,3,4,5), default_value='default', key='-GTITERATIONS-' ,size=(20,0)),
-               sg.Combo(values=('yes', 'no'), default_value='yes', key='-MBEDITERATION-', size=(27,0)),
-               sg.Combo(values=('default(0)', 1,2,3,4,5), default_value='default(0)', key='-ITERATIONS-', size=(26,0)),
-               sg.Combo(values=('yes', 'no'), default_value='yes', key='-GUIDETREEOUT-', size=(20,0))],
+              [sg.Combo(values=('default', 0,1,2,3,4,5), default_value='default', key='-GTITERATIONS-' ,size=(20,0), readonly=True),
+               sg.Combo(values=('yes', 'no'), default_value='yes', key='-MBEDITERATION-', size=(27,0), readonly=True),
+               sg.Combo(values=('default(0)', 1,2,3,4,5), default_value='default(0)', key='-ITERATIONS-', size=(26,0), readonly=True),
+               sg.Combo(values=('yes', 'no'), default_value='yes', key='-GUIDETREEOUT-', size=(20,0), readonly=True)],
 
               [sg.Text('Order')],
-              [sg.Combo(values=('aligned', 'input'), default_value='aligned', key='-ORDER-', size=(20,0))],
+              [sg.Combo(values=('aligned', 'input'), default_value='aligned', key='-ORDER-', size=(20,0), readonly=True)],
               
               [sg.Text('\n\n\t\t\t\t\t  '),
                sg.Button('Execute MSA', font='AnyFont, 13')],
@@ -314,16 +317,16 @@ layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
                                expand_y=True)
                 ]]
 
-##############################################################################
-##############################################################################
-#                                 def main                                   #
-##############################################################################
-##############################################################################
+####################################################################################################################
+####################################################################################################################
+#                                                    def main                                                      #
+####################################################################################################################
+####################################################################################################################
 # Main functions
 def main():
     make_window(sg.theme('LightBrown2'))
 
-# Create the window ----------------------------------------------------------
+# Create the window ------------------------------------------------------------------------------------------------
 window = sg.Window('Graphical User Interphase', layout,
                    grab_anywhere=True,
                    size=(1500,900), use_custom_titlebar=True,
@@ -340,11 +343,11 @@ window['-IMAGE2-'].update(data=image2)
 window['-IMAGE3-'].update(data=image3)
 window['-IMAGE4-'].update(data=image4)
 
-##############################################################################
-##############################################################################
-#                                Event loop                                  #
-##############################################################################
-##############################################################################
+####################################################################################################################
+####################################################################################################################
+#                                                   Event loop                                                      #
+####################################################################################################################
+####################################################################################################################
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
@@ -398,14 +401,6 @@ while True:
     if event == "-B3-":
         print("[LOG Went back to the MSA page]")
         window['-MSA_TAB-'].select()
-
-    if event == "-BROWSE-":
-        print("[LOG] Browsed after file")
-        selected_file = values['-BROWSE-']
-        window['-INFILE-'].update(selected_file)
-
-    if event == "BLAST":
-        print("[LOG] Clicked 'BLAST'")
 
         # Ask for input --------------------------------------------------------------
         program = values['-BLASTTYPE-']
@@ -501,7 +496,7 @@ while True:
             with open(file_path, 'r') as file:
                 file_content = file.read()
         window['-OUTPUT-'].update(file_content)
-
+        
     if event == 'Execute MSA':
         print("[LOG] Clicked 'Execute MSA'")
 
