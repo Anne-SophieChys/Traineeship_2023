@@ -1,21 +1,20 @@
 #!/usr/bin/python3
-##############################################################################
-##############################################################################
-#                           Graphical User Interphase                        #
-##############################################################################
-##############################################################################
+####################################################################################################################
+####################################################################################################################
+#                                            Graphical User Interphase                                             #
+####################################################################################################################
+####################################################################################################################
 
-# Installations ##############################################################
+# Installations ----------------------------------------------------------------------------------------------------
 # pip install pysimplegui (v4.60.4)
-# Load the packages ----------------------------------------------------------
+
+# Load the packages ------------------------------------------------------------------------------------------------
 import PySimpleGUI as sg
 from PIL import Image, ImageTk, ImageSequence
 import os
 import time
 
-
-
-# Navigations ################################################################
+# Navigations ------------------------------------------------------------------------------------------------------
 # Get the directory of the script
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -40,9 +39,9 @@ size = (100,100)
 im4 = Image.open(imageClustalOmega_path)
 im4 = im4.resize(size, resample=Image.BICUBIC)
 
-#=============================================================================
-#========================= BLAST Settings ====================================
-#=============================================================================
+#===================================================================================================================
+#================================================ BLAST Settings ===================================================
+#===================================================================================================================
 # BLAST Settings
 from bs4 import BeautifulSoup
 import urllib
@@ -60,28 +59,32 @@ try:
     data = response.read().decode("utf-8")
 
 except Exception as e:
-    sys.exit("{}\nSearching blast.ncbi.nlm.nih.gov/Blast.cgi --> Q5QLK3\n", e)
+    sys.exit("{}\nSearching blast.ncbi.nlm.nih.gov/Blast.cgi\n", e)
 
 soup = BeautifulSoup(data, "html.parser")
-#=============================================================================
-#=============================================================================
-#=============================================================================
 
+#===================================================================================================================
+#================================================ MSA Settings =====================================================
+#===================================================================================================================
+# MSA Settings
+headersclustal = {}
+headersclustal["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36"
+urlclustal = "https://www.genome.jp/tools-bin/clustalw"
 
-##################
-##################
-##################
-import tkinter.filedialog
-from tkinter.ttk import Style
-from tkinter import *
+try:
+    requestclustal = urllib.request.Request(urlclustal, headers = headersclustal)
+    responseclustal = urllib.request.urlopen(requestclustal)
+    dataclustal = responseclustal.read().decode("utf-8")
 
-sg.change_look_and_feel('GreenTan')
+except Exception as e:
+    sys.exit("{}\nSearching genome.jp/tools-bin/clustalw\n", e)
 
-##############################################################################
-##############################################################################
-#                                def make_db                                 #
-##############################################################################
-##############################################################################
+soup = BeautifulSoup(dataclustal, "html.parser")
+
+#===================================================================================================================
+#================================================= def make_db =====================================================
+#===================================================================================================================
 # Function code for building the database
 def make_db():
     def select_fadb_button_cmd():
@@ -102,12 +105,12 @@ def make_db():
     select_file_button(relx=0.692, rely=0.015, relwidth=0.09, relheight=0.138)
     dbwindow.mainloop()    
 
-##############################################################################
-##############################################################################
-#                             def make_window                                #
-##############################################################################
-##############################################################################
+#===================================================================================================================
+#============================================= def make_window =====================================================
+#===================================================================================================================
 # Define the layout of the window
+sg.change_look_and_feel('GreenTan')
+
 def make_window():
     make_db()
 
@@ -117,30 +120,35 @@ menu_def = [['&File', ['Exit']],
             ['&Help', ['About']]]
 
 # Create a Style object for customizing the window's appearance
+import tkinter.filedialog
+from tkinter.ttk import Style
+from tkinter import *
 style = Style()
 
-
-
-
-
-# Create the layouts -------------------------------------------------------------
-# Define the layout of the introduction tab 
+# Create the layouts -----------------------------------------------------------------------------------------------
+#===================================================================================================================
+# DEFINE THE LAYOUT OF THE INTRODUCTIon TAB ========================================================================
+#===================================================================================================================
 intro_layout_column = [[sg.Text('Welcome to ANSO', font='AnyFont 25 bold', size=(105,None), justification=CENTER)],
                        [sg.Image(size=(260,206), key='-IMAGE2-', pad=(10,10))],
                        [sg.Text('Alignment Navigated Sequence Organizer', font='AnyFont 20')],
-                       [sg.Text("This application is a versatile bioinformatics tool designed to streamline sequence analysis tasks.\
-With ANSO, you have the flexibility to perform various essential functions such as BLAST, Multiple \
-Sequence Alignment (MSA), and visualization of phylogenetic trees based on neighborhood analysis. \
-Whether you need to quickly search for similar sequences, align multiple sequences for comparizon, \
-or explore the evolutionary relationships among sequences, ANSO provides a user-friendly interfase \
-to carry out these tasks efficiently. The modular design of ANSO allows you to utilize each tool \
-independently or seamlessly integrated them together, enabling a seamless and comprehensive sequence \
-analysis workflow.", font='AnyFont 9', size=(103, None), justification='center')],
+                       [sg.Text("This application is a versatile bioinformatics tool designed to \
+streamline sequence analysis tasks. With ANSO, you have the flexibility to perform various essential \
+functions such as BLAST, Multiple Sequence Alignment (MSA), and visualization of phylogenetic trees \
+based on neighborhood analysis. Whether you need to quickly search for similar sequences, align \
+multiple sequences for comparizon, or explore the evolutionary relationships among sequences, ANSO \
+provides a user-friendly interfase to carry out these tasks efficiently. The modular design of ANSO \
+allows you to utilize each tool independently or seamlessly integrated them together, enabling a \
+seamless and comprehensive sequence analysis workflow.",
+font='AnyFont 9', size=(103, None), justification='center')],
+
                        [sg.Image(size=(120,80), key='-IMAGE-', pad=(10,10))],
                        [sg.Button('Get started', font='AnyFont 24 bold', key='-GET_STARTED-')]]
 intro_layout = [[sg.Column(intro_layout_column, element_justification='center', pad=(0,40))]]
 
-# Define the layout of the blast tab
+#===================================================================================================================
+# DEFINE THE LAYOUT OF THE BLAST TAB ===============================================================================
+#===================================================================================================================
 blast_layout = [[sg.Image(size=(100,142), key='-IMAGE3-'),
                  sg.VSeparator(),
                  sg.Text('       Basic Local Alignment Search Tool (BLAST)', font='AnyFont 18')
@@ -161,7 +169,7 @@ size=(105,None), expand_x=True)],
 
                 [sg.Text('Enter Query Sequence', font='AnyFont 12 bold')],
                 [sg.Text('Enter accession number(s) or FASTA sequence(s)', font='AnyFont 9 bold')],
-                [sg.Multiline(key= '-QUERY-', size=(111,6)), sg.InputText()],
+                [sg.Multiline(key= '-QUERY-', size=(111,6))],
 
                 [sg.Text('Or, upload file', font='AnyFont 9 bold'),
                 sg.VSeparator(),
@@ -197,7 +205,7 @@ size=(105,None), expand_x=True)],
                  sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
 
                 [sg.Text('\t\t\t\t\t       '),
-                 sg.Button('BLAST', font='AnyFont, 15')],
+                 sg.Button('BLAST', font='AnyFont, 13')],
                 [sg.Text('\t\t\t\t\t          '),
                  sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, key='-GIF1-',
                           enable_events=True, visible=True)],
@@ -207,7 +215,9 @@ size=(105,None), expand_x=True)],
                  sg.Button('Next >', font='AnyFont, 10', key='-N1-')]
                 ]
 
-# Define the layout of the MSA tab
+#===================================================================================================================
+# DEFINE THE LAYOUT OF THE MSA TAB =================================================================================
+#===================================================================================================================
 msa_layout = [[sg.Image(size=(100,100), key='-IMAGE4-'),
                sg.VSeparator(),
                sg.Text('       Multiple Sequence Alignment (MSA)', font='AnyFont 18')],
@@ -216,15 +226,65 @@ of the online Clustal Omega algorithm to perform accurate and efficient sequence
 leveraging the Clustal Omega tool, ANSO ensures that your sequences are aligned with precision, \
 considering both sequence conservation and structural compatibility.', size=(105,None))],
 
-              [sg.Text('General Setting Parameters', font='AnyFont 12 bold')],
-              [sg.Text('Output Format: '), sg.Combo(values=('CLUSTAL', 'GCG(MSF)', 'GDE', 'PIR', 'Phylip', 'FASTA'))],
-              [sg.Text('Pairwise Alignment: '), sg.Radio('FAST/APPROXIMATE', 'PA'), sg.Radio('SLOW/ACCURATE', 'PA')],
-              [sg.Text('Enter Query Sequences', font='AnyFont 12 bold'), sg.Radio('PROTEIN', 'typeseq'), sg.Radio('DNA', 'typeseq')],
-              [sg.Multiline(key= '-QUERYMSA-', size=(111,6))],
-              [sg.Text('Or, upload file', font='AnyFont 9 bold'), sg.FileBrowse(key='-BROWSE-')],
+              [sg.Text('Output Format: '), sg.Combo(values=('CLUSTAL', 'GCG(MSF)', 'GDE', 'PIR', 'Phylip', 'FASTA'), default_value='CLUSTAL', key = '-OUTPUTCLUSTAL-'),
+               sg.Text('\tType of sequence: '),
+               sg.Radio('PROTEIN', 'typeseq', key='-TYPE2SEQ-', default=True),
+               sg.Radio('DNA', 'typeseq', key='-TYPE2SEQ-')],
+              [sg.Text('\t\t\t\t       Pairwise Alignment: '),
+               sg.Radio('FAST/APPROXIMATE', 'PA', key='-FASTSLOW-', default=True),
+               sg.Radio('SLOW/ACCURATE', 'PA', key='-FASTSLOW-')],
+              [sg.Text('Enter Query Sequences', font='AnyFont 12 bold')],
+              [sg.Text('Support Formats: FASTA, NBRF/PIR, EMBL/Swiss Prot, GDE, CLUSTAL, and GCT/MSF', font='AnyFont 9 bold')],
+              [sg.Multiline(key= '-QUERYMSA-', size=(111,5))],
+              [sg.Text('Or, upload file', font='AnyFont 9 bold'), 
+               sg.VSeparator(),
+               sg.FileBrowse(key='-BROWSE-')],
+              
+              # Pairwise Alignment Parameters ------------------------------------
+              [sg.Text('Pairwise Alignment Parameters', font='AnyFont 12 bold')],
+              [sg.Text('For FAST/APPROXIMATE:', font='AnyFont 10'),
+               sg.Text('\tK-tuple(word) size:'), sg.Input(size=(5,0), pad=(0,0), default_text=1, key='-KTUPLE-'),
+               sg.Text('  Window size:'), sg.Input(size=(5,0), pad=(0,0), default_text=5, key='-WINDOWSIZE-'),
+               sg.Text('  Gap Penalty:'), sg.Input(size=(5,0), pad=(0,0), default_text=3, key='-GAPPENALTY-')],
 
+              [sg.Text('\t\t\t\tNumber of Top Diagonals:'), sg.Input(size=(5,0), pad=(0,0), default_text=5, key='-TOPDIAGONALS-'),
+               sg.Text('  Scoring Method:'), sg.Combo(values=('PERCENT', 'ABSOLUTE'), default_value='PERCENT',
+                                                      size=(10,0), key='-SCORINGMETHOD-')],
+              
+              [sg.Text('For SLOW/ACCURATE:', font='AnyFont 10'),
+               sg.Text('\t    Gap Open Penalty:'), sg.Input(size=(5,0), pad=(0,0), default_text=10.0, key='-GAPOPENPENALTYPA-'),
+               sg.Text('Gap Extension Penalty:'), sg.Input(size=(5,0), pad=(0,0), default_text=0.1, key='-GAPEXTENSIONPENALTYPA-')],
+               
+              [sg.Text('\t\t\t\tSelect Weight Matrix:'), sg.Combo(values=('BLOSUM (for PROTEIN)',
+                                                                  'PAM (for PROETIN)',
+                                                                  'GONNET (for PROTEIN)',
+                                                                  'ID (for PROTEIN)',
+                                                                  'IUB (for DNA)',
+                                                                  'CLUSTALW (for DNA)'),
+                                                                  default_value='BLOSUM (for PROTEIN)',
+                                                                  key='-WEIGHTMATRIXPA-')],
+              
+              # Multiple Aligmnent Parameters ------------------------------------
+              [sg.Text('Multiple Alignment Parameters', font='AnyFont 12 bold')],
+              [sg.Text('Gap Open Penalty:'), sg.Input(size=(5,0), pad=(0,0), default_text=10, key='-GAPOPENPENALTYMA-'),
+               sg.Text('Gap Extension Penalty:'), sg.Input(size=(5,0), pad=(0,0), default_text=0.05, key='-GAPEXTENSIONPENALTYMA-'),
+               sg.Text('Weight Transition:'), sg.Radio('YES (Value:', 'WeightT', key='-WEIGHTTRANSITION-'),
+               sg.Input(size=(5,0), pad=(0,0), key='-WEIGHTTRANSITIONVALUE-', default_text=0.5), sg.Text('),'),
+               sg.Radio('NO', 'WeightT', default=True, key='-WEIGHTTRANSITION-')],
+
+               [sg.Text('Hydrophilic Residues (PROTEINS):'),
+                sg.Input(key='-HYDROPHILICRESI-', size=(12,0), pad=(0,0), default_text='GPSNDQERK'),
+                sg.Text('Hydrophilic Gaps:'),
+                sg.Radio('YES', 'HydroGaps', pad=(0,0), default=True, key='-HYDROPHILICGAPS-'),
+                sg.Radio('NO', 'HydroGaps', pad=(0,0), key='-HYDROPHILICGAPS-'),
+                sg.Text('Select Weight Matrix:'), sg.Combo(values=('BLOSUM (for PROTEIN)',
+                                                                   'PAM (for PROETIN)',
+                                                                   'GONNET (for PROTEIN)',
+                                                                   'ID (for PROTEIN)',
+                                                                   'IUB (for DNA)',
+                                                                   'CLUSTALW (for DNA)'), key='-WEIGHTMATRIXMA-')],
               [sg.Text('\t\t\t\t\t  '),
-               sg.Button('Execute MSA', font='AnyFont, 15')],
+               sg.Button('Execute MSA', font='AnyFont, 13')],
               [sg.Text('\t\t\t\t\t             '),
                sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, key='-GIF1-',
                         enable_events=True, visible=True)],
@@ -233,13 +293,18 @@ considering both sequence conservation and structural compatibility.', size=(105
                sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
                sg.Button('Next >', font='AnyFont, 10', key='-N2-')]]
 
-# Define the layout of the MSA tab
+#===================================================================================================================
+# DEFINE THE LAYOUT OF THE TREE TAB ================================================================================
+#===================================================================================================================
 tree_layout = [[sg.Text('This is the Tree layout')],
                [sg.Button('< Back', font='AnyFont, 10', key='-B3-')]]
 
+#===================================================================================================================
+# DEFINE THE LAYOUT OF THE LOG AND THE OUTPUT ======================================================================
+#===================================================================================================================
 # Define the layout of the log tab and the output
 log_layout = [[sg.Text('Output', font='AnyFont 18')],
-              [sg.Multiline(size=(115,30), font='Courier 8', key='-OUTPUT-')],
+              [sg.Multiline(size=(115,30), font='Courier 8', key='-OUTPUT-', autoscroll=True)],
               [sg.Text('Event logging [LOG]', font='AnyFont 18')],
               [sg.Multiline(size=(115,15), font='Courier 8',
                             write_only=True,
@@ -248,7 +313,7 @@ log_layout = [[sg.Text('Output', font='AnyFont 18')],
                             auto_refresh=True)],
               [sg.Text('\n\n\n\t\t\t\t\t      '),sg.Button('Exit', font='AnyFont, 12')]]
                             
-# Create the main layout -----------------------------------------------------
+# Create the main layout -------------------------------------------------------------------------------------------
 layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
                             font='Courier 15', tearoff=True)],
           [sg.Text('Alignment Navigated Search Organizer',
@@ -301,7 +366,13 @@ window['-IMAGE4-'].update(data=image4)
 ##############################################################################
 #                                Event loop                                  #
 ##############################################################################
-##############################################################################    
+##############################################################################
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+ 
 while True:
     event, values = window.read(timeout=100)
 
@@ -309,8 +380,8 @@ while True:
     if event not in (sg.TIMEOUT_EVENT, sg.WIN_CLOSED):
         print('=========== Event = ', event, ' ============ ')
         print('----- Values Directory (key=value) -----')
-        for key in values:
-            print(key, ' = ', values[key])
+        # for key in values:
+        #     print(key, ' = ', values[key])
     
     if event in (None, 'Exit'):
         print("[LOG] Clicked on 'Exit'")
@@ -359,12 +430,6 @@ while True:
         print("[LOG] Clicked 'BLAST'")
 
         # Ask for input --------------------------------------------------------------
-        from selenium import webdriver
-        from selenium.webdriver.common.by import By
-        from selenium.common.exceptions import TimeoutException
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
-
         program = values['-BLASTTYPE-']
         location = url + "?PROGRAM=" + program + "&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome"
 
@@ -459,5 +524,75 @@ while True:
                 file_content = file.read()
         window['-OUTPUT-'].update(file_content)
 
+    if event == 'Execute MSA':
+        print("[LOG] Clicked 'Execute MSA'")
+
+        driver = (webdriver.Firefox())
+        driver.get(urlclustal)
+
+        # Input information about the output format -OUTPUTCLUSTAL-
+        inputoutputclustal = values['-OUTPUTCLUSTAL-']
+        outputclustal = driver.find_element(By.NAME, "output")
+        outputclustal.clear()
+        outputclustal.send_keys(inputoutputclustal)
+
+        # Input information about the pairwise alignment
+        driver.find_element(By.NAME, "pwalignment").send_keys(values['-FASTSLOW-'])
+
+        # Input information about the type of the sequence
+        driver.find_element(By.NAME, "type").send_keys(values['-TYPE2SEQ-'])
+
+        # Input information about the query
+        driver.find_element(By.NAME, "sequence").send_keys(values['-QUERYMSA-'])
+
+        # Input information about the K-tuple(word) size
+        driver.find_element(By.NAME, "ktuple").send_keys(values['-KTUPLE-'])
+
+        # Input information about the window size
+        driver.find_element(By.NAME, "window").send_keys(values['-WINDOWSIZE-'])
+
+        # Input information about the gap penalty
+        driver.find_element(By.NAME, "pairgap").send_keys(values['-GAPPENALTY-'])
+
+        # Input information about the number of top diagonals
+        driver.find_element(By.NAME, "topdiags").send_keys(values['-TOPDIAGONALS-'])
+
+        # Input information about the scoring method
+        driver.find_element(By.NAME, "score").send_keys(values['-SCORINGMETHOD-'])
+
+        # Input information about the gap open penalty
+        driver.find_element(By.NAME, "pwgapopen").send_keys(values['-GAPOPENPENALTYPA-'])
+
+        # Input information about the gap open penalty
+        driver.find_element(By.NAME, "pwgapext").send_keys(values['-GAPEXTENSIONPENALTYPA-'])
+
+        # Input information about the gap open penalty
+        driver.find_element(By.NAME, "pwmatrix").send_keys(values['-WEIGHTMATRIXPA-'])
+
+        # Input information about the gap open penalty
+        driver.find_element(By.NAME, "gapopen").send_keys(values['-GAPOPENPENALTYMA-'])
+
+        # Input information about the gap open penalty
+        driver.find_element(By.NAME, "gapext").send_keys(values['-GAPEXTENSIONPENALTYMA-'])
+
+        # Input information about the gap open penalty
+        driver.find_element(By.NAME, "transitions").send_keys(values['-WEIGHTTRANSITION-'])
+        
+        # Input information about the gap open penalty
+        driver.find_element(By.NAME, "trans_weight").send_keys(values['-WEIGHTTRANSITIONVALUE-'])
+
+        # Input information about the gap open penalty
+        driver.find_element(By.NAME, "hgapresidues").send_keys(values['-HYDROPHILICRESI-'])
+
+        # Input information about the gap open penalty
+        driver.find_element(By.NAME, "nohgap").send_keys(values['-HYDROPHILICGAPS-'])
+
+        # Input information about the gap open penalty
+        driver.find_element(By.NAME, "matrix").send_keys(values['-WEIGHTMATRIXMA-'])
+
+        # Click on the Execute Multiple Aglinment Button
+        ExecuteMSA = driver.find_element(By.XPATH, '//*[@id="clustalw"]/input[4]')
+        ExecuteMSA.click()
+        print('[LOG] MSA has started')
 
 # window.close()
