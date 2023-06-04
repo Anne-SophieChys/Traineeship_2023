@@ -161,8 +161,11 @@ sequence and sequences in a database. BLAST uses an algorithm that rapidly align
 sequence with sequences in the database and calculates a similarity score. This score indicates \
 the degree of sequence similarity or homology between the query and database sequences.',
 size=(105,None), expand_x=True)],
+                
+                [sg.HSeparator()],
 
-                [sg.Button('blastn', font='AnyFont, 10', key='-BLASTN-', button_color=('#475841', 'white')),
+                [sg.Text('\t\t\t'),
+                 sg.Button('blastn', font='AnyFont, 10', key='-BLASTN-', button_color=('#475841', 'white')),
                  sg.Button('blastp', font='AnyFont, 10', key='-BLASTP-'),
                  sg.Button('blastx', font='AnyFont, 10', key='-BLASTX-'),
                  sg.Button('tblastn', font='AnyFont, 10', key='-TBLASTN-'),
@@ -185,15 +188,36 @@ size=(105,None), expand_x=True)],
 
                 [sg.Text('Database          ', font='AnyFont 9 bold'),
                  sg.VSeparator(),
-                 sg.Combo(values=('Reference RNA sequence (refseq_rna)',
+                 sg.Combo(values=('Nucleotide collection (nr/nt)',
+                                  'RefSeq Select RNA sequences (refseq_select)',
+                                  'Reference RNA sequences (refseq_rna)',
+                                  'RefSeq Representative genomes (refseq_representative_genomes)',
                                   'RefSeq Genome Database (refseq_genomes)',
+                                  'Whole-genome shotgun contigs (wgs)',
+                                  'Expressed sequence tags (est)',
+                                  'Sequence Read Archive (SRA)',
+                                  'Transcriptome Shotgun Assembly (TSA)',
+                                  'Targeted Loci(TLS)',
+                                  'High throughput genomic sequences (HTGS)',
+                                  'Patent sequences(pat)',
                                   'PDB nucleotide database (pdb)',
-                                  'Non-redundant protein sequences (nr)',
+                                  'Human RefSeqGene sequences(RefSeq_Gene)',
+                                  'Genomic survey sequences (gss)',
+                                  'Sequence tagged sites (dbsts)'),
+                                  default_value='Nucleotide collection (nr/nt)',
+                                  key='-DBBLASTN-', readonly=True, visible=True),
+
+                 sg.Combo(values=('Non-redundant protein sequences (nr)',
+                                  'RefSeq Select proteins (refseq_select)',
+                                  'Reference proteins (refseq_protein)',
+                                  'Model Organisms (landmark)',
                                   'UniProtKB/Swiss-Prot(swissprot)',
                                   'Patented protein sequences(pataa)',
+                                  'Protein Data Bank proteins(pdb)',
                                   'Metagenomic proteins(env_nr)',
                                   'Transcriptome Shotgun Assembly proteins (tsa_nr)'),
-                         key='-DB-', readonly=True)],
+                                  default_value='Non-redundant protein sequences (nr)',
+                                  key='-DBBLASTP-', readonly=True, visible=False)],
                 
                 [sg.Text('Algorithm parameters', font='AnyFont 12 bold')],
                 [sg.Text('Max target \nsequences        ', font='AnyFont 9 bold'),
@@ -285,15 +309,10 @@ tree_layout = [[sg.Text('This is the Tree layout')],
 # DEFINE THE LAYOUT OF THE LOG AND THE OUTPUT ======================================================================
 #===================================================================================================================
 # Define the layout of the log tab and the output
-log_layout = [[sg.Text('Output', font='AnyFont 18')],
-              [sg.Multiline(size=(115,30), font='Courier 8', key='-OUTPUT-', autoscroll=True)],
-              [sg.Text('Event logging [LOG]', font='AnyFont 18')],
-              [sg.Multiline(size=(115,15), font='Courier 8',
-                            write_only=True,
-                            reroute_stdout=True, reroute_stderr=True,
-                            echo_stdout_stderr=True, autoscroll=True,
-                            auto_refresh=True)],
-              [sg.Text('\n\n\n\t\t\t\t\t      '),sg.Button('Exit', font='AnyFont, 12')]]
+output_layout = [[sg.Text('OUTPUT', font='AnyFont 18')],
+                 [sg.Multiline(size=(115,48), font='Courier 8', key='-OUTPUT-', autoscroll=False,
+                               write_only=True, auto_refresh=True)],
+                 [sg.Text('\n\n\n\t\t\t\t\t      '),sg.Button('Exit', font='AnyFont, 12')]]
                             
 # Create the main layout -------------------------------------------------------------------------------------------
 layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
@@ -313,7 +332,7 @@ layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
                 )]], sbar_relief=sg.RELIEF_RAISED),
 
           sg.Column(
-                    [[sg.Frame('', log_layout, border_width=0,
+                    [[sg.Frame('', output_layout, border_width=0,
                                pad=((0,0),(20,0)))]],
                                expand_y=True)
                 ]]
@@ -346,7 +365,7 @@ window['-IMAGE4-'].update(data=image4)
 
 ####################################################################################################################
 ####################################################################################################################
-#                                                   Event loop                                                      #
+#                                                   Event loop                                                     #
 ####################################################################################################################
 ####################################################################################################################
 from selenium import webdriver
@@ -428,18 +447,32 @@ while True:
     if event == '-BLASTN-':
         print('[LOG] The tab BLASTN is selected')
         programtype = 'blastn'
+        window['-DBBLASTN-'].update(visible=True)
+        window['-DBBLASTP-'].update(visible=False)
+
     if event == '-BLASTP-':
         print('[LOG] The tab BLASTP is selected')
         programtype = 'blastp'
+        window['-DBBLASTN-'].update(visible=False)
+        window['-DBBLASTP-'].update(visible=True)
+
     if event == '-BLASTX-':
         print('[LOG] The tab BLASTX is selected')
         programtype = 'blastx'
+        window['-DBBLASTN-'].update(visible=False)
+        window['-DBBLASTP-'].update(visible=True)
+
     if event == '-TBLASTN-':
         print('[LOG] The tab TBLASTN is selected')
         programtype = 'tblastn' 
+        window['-DBBLASTN-'].update(visible=True)
+        window['-DBBLASTP-'].update(visible=False)
+
     if event == '-TBLASTX-':
         print('[LOG] The tab TBLASTX is selected')
         programtype = 'tblastx' 
+        window['-DBBLASTN-'].update(visible=True)
+        window['-DBBLASTP-'].update(visible=False)
 
 # Performing the BLAST ---------------------------------------------------------------------------------------------
     if event == "BLAST":
