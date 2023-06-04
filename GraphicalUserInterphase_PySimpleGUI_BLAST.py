@@ -127,7 +127,7 @@ style = Style()
 
 # Create the layouts -----------------------------------------------------------------------------------------------
 #===================================================================================================================
-# DEFINE THE LAYOUT OF THE INTRODUCTION TAB ========================================================================
+# DEFINE THE LAYOUT OF THE INTRODUCTIon TAB ========================================================================
 #===================================================================================================================
 intro_layout_column = [[sg.Text('Welcome to ANSO', font='AnyFont 25 bold', size=(105,None), justification=CENTER)],
                        [sg.Image(size=(260,206), key='-IMAGE2-', pad=(10,10))],
@@ -147,156 +147,12 @@ font='AnyFont 9', size=(103, None), justification='center')],
 intro_layout = [[sg.Column(intro_layout_column, element_justification='center', pad=(0,40))]]
 
 #===================================================================================================================
-# DEFINE THE LAYOUT OF THE BLAST TAB (BLASTN) ======================================================================
+# DEFINE THE LAYOUT OF THE BLAST TAB ===============================================================================
 #===================================================================================================================
-blastn_layout = [[sg.Text('Enter Query Sequence', font='AnyFont 12 bold')],
-                 [sg.Text('Enter accession number(s) or FASTA sequence(s)\t\t\t\t      ', font='AnyFont 9 bold'),
-                  sg.Checkbox('Align two or more sequences')],
-                 [sg.Multiline(key= '-QUERY-', size=(111,6))],
-
-                 [sg.Text('Or, upload file', font='AnyFont 9 bold'),
-                  sg.VSeparator(),
-                  sg.Input(enable_events=True, key='-INFILE-', expand_x=True,
-                           default_text='No file selected...', readonly=True),
-                  sg.FileBrowse(key='-BLASTINPUTFILE-')],
-
-                 [sg.Text('Job Title\t          ', font='AnyFont 9 bold'),
-                  sg.VSeparator(),
-                  sg.Input(key='-JOBTITLE-', border_width=0)],
-
-                 [sg.Text('Database          ', font='AnyFont 9 bold'),
-                  sg.VSeparator(),
-                  sg.Combo(values=('Nucleotide collection (nr/nt)',
-                                  'RefSeq Select RNA sequences (refseq_select)',
-                                  'Reference RNA sequences (refseq_rna)',
-                                  'RefSeq Representative genomes (refseq_representative_genomes)',
-                                  'RefSeq Genome Database (refseq_genomes)',
-                                  'Whole-genome shotgun contigs (wgs)',
-                                  'Expressed sequence tags (est)',
-                                  'Sequence Read Archive (SRA)',
-                                  'Transcriptome Shotgun Assembly (TSA)',
-                                  'Targeted Loci(TLS)',
-                                  'High throughput genomic sequences (HTGS)',
-                                  'Patent sequences(pat)',
-                                  'PDB nucleotide database (pdb)',
-                                  'Human RefSeqGene sequences(RefSeq_Gene)',
-                                  'Genomic survey sequences (gss)',
-                                  'Sequence tagged sites (dbsts)',
-                                  'Betacoronavirus Genbank'),
-                                  key = '-DBBLASTN-', readonly=True, visible=True,
-                                  default_value='Nucleotide collection (nr/nt)')],
-                
-                 [sg.Text('Algorithm parameters', font='AnyFont 12 bold')],
-                 [sg.Text('Max target \nsequences        ', font='AnyFont 9 bold'),
-                  sg.VSeparator(),
-                  sg.Combo(values=(10,50,100,200,250,500,1000,5000),
-                          default_value='100',
-                          key='-MAXTS-',
-                          readonly=True)],
-
-                 [sg.Text('Threshold         ', font='AnyFont 9 bold'),
-                  sg.VSeparator(),
-                  sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
-
-                 [sg.Text('\t\t\t\t\t       '),
-                  sg.Button('BLAST', key='-BLAST-', font='AnyFont, 13')],
-                 [sg.Text('\t\t\t\t\t          '),
-                  sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, key='-GIF1-',
-                          enable_events=True, visible=True)],
-
-                 [sg.Button('< Back', font='AnyFont, 10', key='-B1-'),
-                  sg.Text('\t\t\t\t\t\t\t\t\t\t '),
-                  sg.Button('Next >', font='AnyFont, 10', key='-N1-')]
-                 ]
-
-#===================================================================================================================
-# DEFINE THE LAYOUT OF THE BLAST TAB (BLASTP) ======================================================================
-#===================================================================================================================
-blastp_layout = [[sg.Text('Enter Query Sequence', font='AnyFont 12 bold')],
-                 [sg.Text('Enter accession number(s) or FASTA sequence(s)\t\t\t\t      ', font='AnyFont 9 bold'),
-                  sg.Checkbox('Align two or more sequences')],
-                 [sg.Multiline(key= '-QUERY-', size=(111,6))],
-
-                 [sg.Text('Or, upload file', font='AnyFont 9 bold'),
-                  sg.VSeparator(),
-                  sg.Input(enable_events=True, key='-INFILE-', expand_x=True,
-                           default_text='No file selected...', readonly=True),
-                  sg.FileBrowse(key='-BLASTINPUTFILE-')],
-
-
-
-                 [sg.Text('Job Title\t          ', font='AnyFont 9 bold'),
-                  sg.VSeparator(),
-                  sg.Input(key='-JOBTITLE-', border_width=0)],
-
-                 [sg.Text('Database          ', font='AnyFont 9 bold'),
-                  sg.VSeparator(),
-
-                  sg.Combo(values=('Non-redundant protein sequences (nr)',
-                                   'RefSeq Select proteins (refseq_select)',
-                                   'Reference proteins (refseq_protein)',
-                                   'Model Organisms (landmark)',
-                                   'UniProtKB/Swiss-Prot(swissprot)',
-                                   'Patented protein sequences(pataa)',
-                                   'Protein Data Bank proteins(pdb)',
-                                   'Metagenomic proteins(env_nr)',
-                                   'Transcriptome Shotgun Assembly proteins (tsa_nr)'),
-                                   key='-DBBLASTP-', readonly=True, visible=True,
-                                   default_value='Non-redundant protein sequences (nr)')],
-                
-                 [sg.Text('Algorithm parameters', font='AnyFont 12 bold')],
-                 [sg.Text('Max target \nsequences        ', font='AnyFont 9 bold'),
-                  sg.VSeparator(),
-                  sg.Combo(values=(10,50,100,200,250,500,1000,5000),
-                          default_value='100',
-                          key='-MAXTS-',
-                          readonly=True)],
-
-                 [sg.Text('Threshold         ', font='AnyFont 9 bold'),
-                  sg.VSeparator(),
-                  sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
-
-                 [sg.Text('\t\t\t\t\t       '),
-                  sg.Button('BLAST', key='-BLAST-', font='AnyFont, 13')],
-                 [sg.Text('\t\t\t\t\t          '),
-                  sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, key='-GIF1-',
-                          enable_events=True, visible=True)],
-
-                 [sg.Button('< Back', font='AnyFont, 10', key='-B1-'),
-                  sg.Text('\t\t\t\t\t\t\t\t\t\t '),
-                  sg.Button('Next >', font='AnyFont, 10', key='-N1-')]
-                 ]
-
-#===================================================================================================================
-# DEFINE THE LAYOUT OF THE BLAST TAB (BLASTN) ======================================================================
-#===================================================================================================================
-blastx_layout = [[sg.Text('test')]]
-
-#===================================================================================================================
-# DEFINE THE LAYOUT OF THE BLAST TAB (BLASTN) ======================================================================
-#===================================================================================================================
-tblastn_layout = [[sg.Text('test')]]
-
-#===================================================================================================================
-# DEFINE THE LAYOUT OF THE BLAST TAB (BLASTN) ======================================================================
-#===================================================================================================================
-tblastx_layout = [[sg.Text('test')]]
-
-#===================================================================================================================
-# DEFINE THE LAYOUT OF THE BLAST TAB (BLASTN) ======================================================================
-#===================================================================================================================
-tab_group = sg.TabGroup(
-            [[sg.Tab('blastn', blastn_layout, key='-BLASTN_TAB-'),
-              sg.Tab('blastp', blastp_layout, key='-BLASTP_TAB-'),
-              sg.Tab('blastx', blastx_layout, key='-BLASTX_TAB-'),
-              sg.Tab('tblastn', tblastn_layout, key='-TBLASTN_TAB-'),
-              sg.Tab('tblastx', tblastx_layout, key='-TBLASTX_TAB-')]],
-              key='-BLASTTYPE-', expand_x=True, change_submits=True)
-
 blast_layout = [[sg.Image(size=(100,142), key='-IMAGE3-'),
                  sg.VSeparator(),
-                 sg.Text('       Basic Local Alignment Search Tool (BLAST)', font='AnyFont 18')
-                 ],
+                 sg.Text('       Basic Local Alignment Search Tool (BLAST)', font='AnyFont 18')],
+
                 [sg.Text('BLAST is a widely used bioinformatics algorithm and software tool for \
 sequence similarity searching. It is performed to compare a query sequence against a database of \
 known sequences to identify similar sequences and infer functional or evolutionary relationships.\
@@ -306,7 +162,61 @@ sequence with sequences in the database and calculates a similarity score. This 
 the degree of sequence similarity or homology between the query and database sequences.',
 size=(105,None), expand_x=True)],
 
-                [tab_group]]
+                [sg.Button('blastn', font='AnyFont, 10', key='-BLASTN-', button_color=('#475841', 'white')),
+                 sg.Button('blastp', font='AnyFont, 10', key='-BLASTP-'),
+                 sg.Button('blastx', font='AnyFont, 10', key='-BLASTX-'),
+                 sg.Button('tblastn', font='AnyFont, 10', key='-TBLASTN-'),
+                 sg.Button('tblastx', font='AnyFont, 10', key='-TBLASTX-')],
+
+                [sg.Text('Enter Query Sequence', font='AnyFont 12 bold')],
+                [sg.Text('Enter accession number(s) or FASTA sequence(s)', font='AnyFont 9 bold')],
+                [sg.Multiline(key= '-QUERY-', size=(111,6))],
+
+                [sg.Text('Or, upload file', font='AnyFont 9 bold'),
+                sg.VSeparator(),
+                sg.Input(enable_events=True, key='-INFILE-', expand_x=True),
+                sg.FileBrowse()],
+
+
+
+                [sg.Text('Job Title\t          ', font='AnyFont 9 bold'),
+                 sg.VSeparator(),
+                 sg.Input(key='-JOBTITLE-', border_width=0)],
+
+                [sg.Text('Database          ', font='AnyFont 9 bold'),
+                 sg.VSeparator(),
+                 sg.Combo(values=('Reference RNA sequence (refseq_rna)',
+                                  'RefSeq Genome Database (refseq_genomes)',
+                                  'PDB nucleotide database (pdb)',
+                                  'Non-redundant protein sequences (nr)',
+                                  'UniProtKB/Swiss-Prot(swissprot)',
+                                  'Patented protein sequences(pataa)',
+                                  'Metagenomic proteins(env_nr)',
+                                  'Transcriptome Shotgun Assembly proteins (tsa_nr)'),
+                         key='-DB-', readonly=True)],
+                
+                [sg.Text('Algorithm parameters', font='AnyFont 12 bold')],
+                [sg.Text('Max target \nsequences        ', font='AnyFont 9 bold'),
+                 sg.VSeparator(),
+                 sg.Combo(values=(10,50,100,200,250,500,1000,5000),
+                          default_value='100',
+                          key='-MAXTS-',
+                          readonly=True)],
+
+                [sg.Text('Threshold         ', font='AnyFont 9 bold'),
+                 sg.VSeparator(),
+                 sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
+
+                [sg.Text('\t\t\t\t\t       '),
+                 sg.Button('BLAST', font='AnyFont, 13')],
+                [sg.Text('\t\t\t\t\t          '),
+                 sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, key='-GIF1-',
+                          enable_events=True, visible=True)],
+
+                [sg.Button('< Back', font='AnyFont, 10', key='-B1-'),
+                 sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
+                 sg.Button('Next >', font='AnyFont, 10', key='-N1-')]
+                ]
 
 #===================================================================================================================
 # DEFINE THE LAYOUT OF THE MSA TAB =================================================================================
@@ -472,8 +382,8 @@ while True:
     #         sg.theme('DarkBlue3')
     #     else:
     #         sg.theme('LightBrown2')
-    
-    # Buttons --------------------------------------------------------------------------
+
+    # Buttons ------------------------------------------------------------------------------------------------------
     if event == "-GET_STARTED-":
         print("[LOG] Went to the BLAST page")
         window['-BLAST_TAB-'].select()
@@ -492,47 +402,78 @@ while True:
     if event == "-B3-":
         print("[LOG Went back to the MSA page]")
         window['-MSA_TAB-'].select()
-    
-    if event == '-BLAST-6':
-        print("[LOG] Clicked on 'Blast'")
-        if values['-BLASTTYPE-'] == '-BLASTN_TAB-':
-            values['-BLASTTYPE-'] = 
-        if values['-BLASTTYPE-'] == '-BLASTP_TAB-':
-            values['-BLASTTYPE-'] = 'blastp'
+
+
+# BLAST type buttons -----------------------------------------------------------------------------------------------
+    select_button1 = '-BLASTN-'
+    select_button2 = '-BLASTP-'
+    select_button3 = '-BLASTX-'
+    select_button4 = '-TBLASTN-'
+    select_button5 = '-TBLASTX-'
+
+    if event in ['-BLASTN-', '-BLASTP-', '-BLASTX-', '-TBLASTN-', '-TBLASTX-']:
+        window[select_button1].update(button_color=('#475841', 'white'))
+        window[select_button1].update(button_color=('white', '#475841'))
+        window[select_button2].update(button_color=('#475841', 'white'))
+        window[select_button2].update(button_color=('white', '#475841'))
+        window[select_button3].update(button_color=('#475841', 'white'))
+        window[select_button3].update(button_color=('white', '#475841'))
+        window[select_button4].update(button_color=('#475841', 'white'))
+        window[select_button4].update(button_color=('white', '#475841'))
+        window[select_button5].update(button_color=('#475841', 'white'))
+        window[select_button5].update(button_color=('white', '#475841'))
+        window[event].update(button_color=('#475841', 'white'))
+        select_button=event
+   
+    if event == '-BLASTN-':
+        print('[LOG] The tab BLASTN is selected')
+        programtype = 'blastn'
+    if event == '-BLASTP-':
+        print('[LOG] The tab BLASTP is selected')
+        programtype = 'blastp'
+    if event == '-BLASTX-':
+        print('[LOG] The tab BLASTX is selected')
+        programtype = 'blastx'
+    if event == '-TBLASTN-':
+        print('[LOG] The tab TBLASTN is selected')
+        programtype = 'tblastn' 
+    if event == '-TBLASTX-':
+        print('[LOG] The tab TBLASTX is selected')
+        programtype = 'tblastx' 
+
+# Performing the BLAST ---------------------------------------------------------------------------------------------
+    if event == "BLAST":
+        print("[LOG] Started the 'BLAST'")
 
         # Ask for input --------------------------------------------------------------
-        program = values['-BLASTTYPE-']
-        print(program)
+        program = programtype
         location = url + "?PROGRAM=" + program + "&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome"
-
+        print(location)
         driver = (webdriver.Firefox())
         driver.get(location)
 
         # Get information about the -QUERY-
         inputquery = values['-QUERY-']
+        # inputfile = values['--'] browse doesn't work yet
         query = driver.find_element(By.ID, "seq")
         query.send_keys(inputquery)
-
-        # # Get information about the -BLASTINPUTFILE-
-        # blastinputfile = values['-BLASTINPUTFILE-']
-        # print(blastinputfile)
 
         # Get information about the -JOBTITLE-
         inputjobtitle = values['-JOBTITLE-']
         jobtitle = driver.find_element(By.NAME, "JOB_TITLE")
         jobtitle.send_keys(inputjobtitle)
 
-        # # Get information about the -DB-
-        # if values['-DB-'] == 'Reference proteins (refseq_protein)':
-        #     values['-DB-'] = 'RR'
-        # if values['-DB-'] == 'Protein Data Bank proteins(pdb)':
-        #     values['-DB-'] = 'pp'
+        # Get information about the -DB-
+        if values['-DB-'] == 'Reference proteins (refseq_protein)':
+            values['-DB-'] = 'RR'
+        if values['-DB-'] == 'Protein Data Bank proteins(pdb)':
+            values['-DB-'] = 'pp'
 
-        # inputdatabasebutton = driver.find_element(By.ID, "DATABASE")
-        # inputdatabasebutton.click()
-        # inputdatabase = values['-DB-']
-        # database = driver.find_element(By.ID, "DATABASE")
-        # database.send_keys(inputdatabase)
+        inputdatabasebutton = driver.find_element(By.ID, "DATABASE")
+        inputdatabasebutton.click()
+        inputdatabase = values['-DB-']
+        database = driver.find_element(By.ID, "DATABASE")
+        database.send_keys(inputdatabase)
 
         # Click on the drop down 'Algorithm paramters' Button
         Algorithmbutton = driver.find_element(By.ID, "btnDescrOver")
@@ -598,10 +539,7 @@ while True:
             with open(file_path, 'r') as file:
                 file_content = file.read()
         window['-OUTPUT-'].update(file_content)
-
-#===================================================================================================================
-# EXECUTE MSA ======================================================================================================
-#===================================================================================================================
+        
     if event == 'Execute MSA':
         print("[LOG] Clicked 'Execute MSA'")
 
