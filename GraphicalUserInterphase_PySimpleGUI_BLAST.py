@@ -173,12 +173,12 @@ size=(105,None), expand_x=True)],
 
                 [sg.Text('Enter Query Sequence', font='AnyFont 12 bold')],
                 [sg.Text('Enter accession number(s) or FASTA sequence(s)', font='AnyFont 9 bold')],
-                [sg.Multiline(key= '-QUERY-', size=(111,6))],
+                [sg.Multiline(key= '-QUERY-', size=(111,5))],
 
                 [sg.Text('Or, upload file', font='AnyFont 9 bold'),
                 sg.VSeparator(),
                 sg.Input(enable_events=True, key='-INFILE-', expand_x=True),
-                sg.FileBrowse()],
+                sg.FileBrowse(key='-FILEUPLOADBLAST-')],
 
 
 
@@ -262,7 +262,7 @@ considering both sequence conservation and structural compatibility.', size=(105
               [sg.Text('Or, upload file', font='AnyFont 9 bold'),
                sg.VSeparator(),
                sg.Input(key='-FILENAMEMSA-', enable_events=True, expand_x=True, default_text="No file selected..."),
-               sg.FileBrowse()],
+               sg.FileBrowse(key='-FILEUPLOADMSA-')],
               
               [sg.HSeparator()],
               [sg.Text('Set parameters', font='AnyFont 12 bold')],
@@ -487,24 +487,23 @@ while True:
 
         # Get information about the -QUERY-
         inputquery = values['-QUERY-']
-        # inputfile = values['--'] browse doesn't work yet
         query = driver.find_element(By.ID, "seq")
         query.send_keys(inputquery)
+
+        # Get information about the -FILEUPLOADBLAST-'
+        inputfileblast = values['-FILEUPLOADBLAST-']
+        if inputfileblast == True:
+            upload = driver.find_element(By.ID, "upl")
+            upload.send_keys(inputfileblast)
 
         # Get information about the -JOBTITLE-
         inputjobtitle = values['-JOBTITLE-']
         jobtitle = driver.find_element(By.NAME, "JOB_TITLE")
         jobtitle.send_keys(inputjobtitle)
 
-        # Get information about the -DB-
-        if values['-DB-'] == 'Reference proteins (refseq_protein)':
-            values['-DB-'] = 'RR'
-        if values['-DB-'] == 'Protein Data Bank proteins(pdb)':
-            values['-DB-'] = 'pp'
-
         inputdatabasebutton = driver.find_element(By.ID, "DATABASE")
         inputdatabasebutton.click()
-        inputdatabase = values['-DB-']
+        inputdatabase = values['-DBBLASTP-']
         database = driver.find_element(By.ID, "DATABASE")
         database.send_keys(inputdatabase)
 
