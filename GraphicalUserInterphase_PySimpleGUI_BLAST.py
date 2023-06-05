@@ -492,7 +492,8 @@ while True:
 
         # Get information about the -FILEUPLOADBLAST-'
         inputfileblast = values['-FILEUPLOADBLAST-']
-        if inputfileblast == True:
+        print(inputfileblast)
+        if inputfileblast:
             upload = driver.find_element(By.ID, "upl")
             upload.send_keys(inputfileblast)
 
@@ -564,7 +565,8 @@ while True:
             except TimeoutException:
                 max_wait_time -= update_interval
                 continue
-    
+        
+        # driver.quit()
         # Display the output file
         file_path = os.path.expanduser("~/Downloads/seqdump.txt")
         if os.path.exists(file_path):
