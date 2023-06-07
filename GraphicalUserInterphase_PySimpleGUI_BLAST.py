@@ -178,7 +178,7 @@ size=(105,None), expand_x=True)],
 
                 [sg.Text('Or, upload file', font='AnyFont 9 bold'),
                 sg.VSeparator(),
-                sg.Input(enable_events=True, key='-INFILE-', expand_x=True, default_text="No file selected..."),
+                sg.Input(enable_events=True, key='-INFILE-', expand_x=True, default_text="No file selected...", readonly=True),
                 sg.FileBrowse(key='-FILEUPLOADBLAST-')],
 
 
@@ -260,7 +260,7 @@ considering both sequence conservation and structural compatibility.', size=(105
               [sg.Multiline(key= '-QUERYMSA-', size=(111,6))],
               [sg.Text('Or, upload file', font='AnyFont 9 bold'),
                sg.VSeparator(),
-               sg.Input(key='-FILENAMEMSA-', enable_events=True, expand_x=True, default_text="No file selected..."),
+               sg.Input(key='-FILENAMEMSA-', enable_events=True, expand_x=True, default_text="No file selected...", readonly=True),
                sg.FileBrowse(key='-FILEUPLOADMSA-')],
               
               [sg.HSeparator()],
@@ -291,6 +291,7 @@ considering both sequence conservation and structural compatibility.', size=(105
               [sg.Text('\n\n\t\t\t\t\t\t'),
                sg.Button('MSA', font='AnyFont, 13'),
                sg.Text('\n\n\n\n\n\n\n\n')],
+
 
               [sg.Button('< Back', font='AnyFont, 10', key='-B2-'),
                sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
@@ -476,153 +477,147 @@ while True:
     if event == "BLAST":
         print("[LOG] Started the 'BLAST'")
 
-        # Loading Dots ----
-        loading = True
-        loading_speed = 3
-        loading_string = '.' * 3
-
+        
         popup_layout = [
-            [sg.Text(' Please wait!', font='AnyFont 12 bold', key='-POPUP-WAIT-'),
-             sg.Text('Blasting', font='AnyFont 12 bold', key='-POPUP-BLASTING-', pad=(0,0)),
-             sg.Text(loading_string, font='AnyFont 12 ', key='-POPUP-DOTS-')],
+            [sg.Text('Blasting... Please wait!',
+                     font='AnyFont 12 bold', key='-POPUP-TEXT-')],
 
-            [sg.Text('                '),
-             sg.Image(data=sg.EMOJI_BASE64_DREAMING, visible=True, key='-EMOJI_DREAMING-')],
+            [sg.Text('            ', key='-EMOJI_DREAMING_SPACE-'),
+             sg.Image(data=sg.EMOJI_BASE64_DREAMING, visible=True, key='-EMOJI_DREAMING-'),
+             sg.Text('       ', key='-EMOJI_HAPPY_SPACE-'),
+             sg.Image(data=sg.EMOJI_BASE64_HAPPY_JOY, visible=False, key='-EMOJI_HAPPY-')],
 
-            [sg.Text('                '),
-            sg.Image(data=sg.EMOJI_BASE64_HAPPY_JOY, visible=False, key='-EMOJI_HAPPY-')],
-
-            [sg.Button('Finish', key='-POPUP-FINISH-', visible=False)]
+            [sg.Text('      '),
+             sg.Button('Finish', key='-POPUP-FINISH-', visible=False)]
             ]
 
         popup_window = sg.Window('Blast in progress', popup_layout, modal=True, finalize=True,
-                                 keep_on_top=True, size=(250,150))
+                                 keep_on_top=True, auto_size_text=True)
 
-        # Loop ----
-        while True:
-            for i in range (5):
-                popup_window['-EMOJI_DREAMING-'].update(visible=True)
-                popup_window['-EMOJI_HAPPY-'].update(visible=False)
+    
 
-            while loading:
-                for index, char in enumerate(loading_string):
-                    popup_window['-POPUP-DOTS-'].update(loading_string)
-                    popup_window.refresh()
-                    time.sleep(1.0 / loading_speed)
 
-                    loading_string += '.'
-                    if len(loading_string) > 3:
-                        loading_string = '.'
-                        
+        for _ in range (1):
+            popup_window['-EMOJI_DREAMING-'].update(visible=True)
+            popup_window['-EMOJI_HAPPY-'].update(visible=False)
 
-                    # Ask for input --------------------------------------------------------------------------------------------
-                    program = programtype
-                    location = url + "?PROGRAM=" + program + "&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome"
-                    print(location)
-                    driver = (webdriver.Firefox())
-                    driver.get(location)
 
-                    # Get information about the -QUERY-
-                    inputquery = values['-QUERY-']
-                    query = driver.find_element(By.ID, "seq")
-                    query.send_keys(inputquery)
+        # Ask for input --------------------------------
+        program = programtype
+        location = url + "?PROGRAM=" + program + "&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome"
+        print(location)
+        driver = (webdriver.Firefox())
+        driver.get(location)
 
-                    # Get information about the -FILEUPLOADBLAST-'
-                    inputfileblast = values['-FILEUPLOADBLAST-']
-                    print(inputfileblast)
-                    if inputfileblast:
-                        upload = driver.find_element(By.ID, "upl")
-                        upload.send_keys(inputfileblast)
+        # Get information about the -QUERY-
+        inputquery = values['-QUERY-']
+        query = driver.find_element(By.ID, "seq")
+        query.send_keys(inputquery)
 
-                    # Get information about the -JOBTITLE-
-                    inputjobtitle = values['-JOBTITLE-']
-                    jobtitle = driver.find_element(By.NAME, "JOB_TITLE")
-                    jobtitle.send_keys(inputjobtitle)
+        # Get information about the -FILEUPLOADBLAST-'
+        inputfileblast = values['-FILEUPLOADBLAST-']
+        print(inputfileblast)
+        if inputfileblast:
+            upload = driver.find_element(By.ID, "upl")
+            upload.send_keys(inputfileblast)
 
-                    inputdatabasebutton = driver.find_element(By.ID, "DATABASE")
-                    inputdatabasebutton.click()
-                    inputdatabase = values['-DBBLASTP-']
-                    database = driver.find_element(By.ID, "DATABASE")
-                    database.send_keys(inputdatabase)
+        # Get information about the -JOBTITLE-
+        inputjobtitle = values['-JOBTITLE-']
+        jobtitle = driver.find_element(By.NAME, "JOB_TITLE")
+        jobtitle.send_keys(inputjobtitle)
 
-                    # Click on the drop down 'Algorithm paramters' Button
-                    Algorithmbutton = driver.find_element(By.ID, "btnDescrOver")
-                    Algorithmbutton.click()
+        inputdatabasebutton = driver.find_element(By.ID, "DATABASE")
+        inputdatabasebutton.click()
+        inputdatabase = values['-DBBLASTP-']
+        database = driver.find_element(By.ID, "DATABASE")
+        database.send_keys(inputdatabase)
 
-                    # Get information about the -MAXTS-
-                    if values['-MAXTS-'] == 10:
-                        values['-MAXTS-'] = 11
-                    if values['-MAXTS-'] == 50:
-                        values['-MAXTS-'] = 555
-                    if values['-MAXTS-'] == 100:
-                        values['-MAXTS-'] = 111
-                    if values['-MAXTS-'] == 5000:
-                        values['-MAXTS-'] = 55
-                    
-                    inputmaxbutton = driver.find_element(By.ID, "NUM_SEQ")
-                    inputmaxbutton.click()
-                    inputmax = values['-MAXTS-']
-                    max = driver.find_element(By.ID, "NUM_SEQ")
-                    max.send_keys(inputmax)
+        # Click on the drop down 'Algorithm paramters' Button
+        Algorithmbutton = driver.find_element(By.ID, "btnDescrOver")
+        Algorithmbutton.click()
 
-                    # Get information about the -THRESHOLD-
-                    inputthreshold = values['-THRESHOLD-']
-                    threshold = driver.find_element(By.ID, "expect")
-                    threshold.clear()
-                    threshold.send_keys(inputthreshold)
-
-                    # Click on the BLAST Button
-                    blast = driver.find_element(By.CLASS_NAME, "blastbutton")
-                    blast.click()
-                    print('[LOG] Blast has started')
-
-                    max_wait_time = 99999
-                    update_interval = 5
-
-                    wait = WebDriverWait(driver, update_interval)
-
-                    try:
-                        driver.find_element(By.ID, "type-a")
-                        wait.until(EC.staleness_of(driver.find_element(By.ID, "type-a")))
-                    except:
-                        print('There went something wrong, try again later...')
-                        pass
-
-                    while max_wait_time > 0:
-                        try:
-                            download_button = wait.until(EC.element_to_be_clickable((By.ID, "btnDwnld")))
-                            download_button.click()
-                            print("[LOG] Clicked on the Download button")
-                            download_button2 = driver.find_element(By.ID, 'dwFST')
-                            download_button2.click()
-                            time.sleep(5)
-                            print("[LOG] The file has been downloaded")
-                            break
-                        
-                        except TimeoutException:
-                            max_wait_time -= update_interval
-                            continue
-                    
-                    # driver.quit()
-                    # Display the output file
-                    file_path = os.path.expanduser("~/Downloads/seqdump.txt")
-                    if os.path.exists(file_path):
-                        with open(file_path, 'r') as file:
-                            file_content = file.read()
-                    window['-OUTPUT-'].update(file_content)
-            
-            # After BLAST completed --------------------------------------------------------------------------------
-            popup_window['-POPUP-TEXT-'].update('Blast completed!')
-            popup_window['-POPUP-FINISH-'].update(visible=True)
-            popup_window['-EMOJI_DREAMING-'].update(visible=False)
-            popup_window['-EMOJI_HAPPY-'].update(visible=True)
-
-            while True:
-                popup_event, popup_values = popup_window.read()
-                if popup_event == '-POPUP-FINISH-' or popup_event == sg.WINDOW_CLOSED:
-                    popup_window.close()
-                    break
+        # Get information about the -MAXTS-
+        if values['-MAXTS-'] == 10:
+            values['-MAXTS-'] = 11
+        if values['-MAXTS-'] == 50:
+            values['-MAXTS-'] = 555
+        if values['-MAXTS-'] == 100:
+            values['-MAXTS-'] = 111
+        if values['-MAXTS-'] == 5000:
+            values['-MAXTS-'] = 55
         
+        inputmaxbutton = driver.find_element(By.ID, "NUM_SEQ")
+        inputmaxbutton.click()
+        inputmax = values['-MAXTS-']
+        max = driver.find_element(By.ID, "NUM_SEQ")
+        max.send_keys(inputmax)
+
+        # Get information about the -THRESHOLD-
+        inputthreshold = values['-THRESHOLD-']
+        threshold = driver.find_element(By.ID, "expect")
+        threshold.clear()
+        threshold.send_keys(inputthreshold)
+
+        # Click on the BLAST Button
+        blast = driver.find_element(By.CLASS_NAME, "blastbutton")
+        blast.click()
+        print('[LOG] Blast has started')
+
+        max_wait_time = 99999
+        update_interval = 5
+
+        wait = WebDriverWait(driver, update_interval)
+
+        try:
+            driver.find_element(By.ID, "type-a")
+            wait.until(EC.staleness_of(driver.find_element(By.ID, "type-a")))
+        except:
+            print('There went something wrong, try again later...')
+            pass
+
+        while max_wait_time > 0:
+            try:
+                download_button = wait.until(EC.element_to_be_clickable((By.ID, "btnDwnld")))
+                download_button.click()
+                print("[LOG] Clicked on the Download button")
+                download_button2 = driver.find_element(By.ID, 'dwFST')
+                download_button2.click()
+                time.sleep(5)
+                print("[LOG] The file has been downloaded")
+                break
+            
+            except TimeoutException:
+                max_wait_time -= update_interval
+                continue
+        
+        # driver.quit()
+
+        # Display the output file
+        file_path = os.path.expanduser("~/Downloads/seqdump.txt")
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as file:
+                file_content = file.read()
+        window['-OUTPUT-'].update(file_content)
+        
+        # Loading Ready ----------------------------------------------------------------------------------------------
+        popup_window['-POPUP-TEXT-'].update('Blast completed!')
+        popup_window['-POPUP-FINISH-'].update(visible=True)
+        popup_window['-EMOJI_HAPPY-'].update(visible=True)
+        popup_window['-EMOJI_HAPPY_SPACE-'].update(visible=True)
+        popup_window['-EMOJI_DREAMING-'].update(visible=False)
+        popup_window['-EMOJI_DREAMING_SPACE-'].update(visible=False)
+
+        while True:
+            popup_event, popup_values = popup_window.read()
+            if popup_event == '-POPUP-FINISH-' or popup_event == sg.WINDOW_CLOSED:
+                popup_window.close()
+                break
+    
+    # Performint the Next step -N1-
+    if event == '-N1-':
+        window['-FILENAMEMSA-'].update(file_path)
+
+
     # Perofrming MSA -----------------------------------------------------------------------------------------------
     if event == 'MSA':
         print("[LOG] Clicked 'MSA'")
@@ -639,6 +634,13 @@ while True:
 
         # Input information about the query -QUERYMSA-
         driver.find_element(By.ID, 'sequence').send_keys(values['-QUERYMSA-'])
+
+        # Input information about the -FILEUPLOADMSA-'
+        inputfilemsa = values['-FILEUPLOADMSA-']
+        print(inputfilemsa)
+        if inputfilemsa:
+            uploadmsa = driver.find_element(By.ID, "upfile")
+            uploadmsa.send_keys(inputfilemsa)
 
         # Input information about the output format -OUTPUTMSA-
         driver.find_element(By.ID, 'outfmt').send_keys(values['-OUTPUTMSA-'])
