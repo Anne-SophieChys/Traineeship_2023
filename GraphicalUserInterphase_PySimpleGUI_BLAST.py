@@ -40,6 +40,11 @@ size = (100,100)
 im4 = Image.open(imageClustalOmega_path)
 im4 = im4.resize(size, resample=Image.BICUBIC)
 
+imageDocument_pah = os.path.join(script_dir, "./Brand/Documentimage.jpg")
+size = (102,102)
+im5 = Image.open(imageDocument_pah)
+im5 = im5.resize(size, resample=Image.BICUBIC)
+
 #===================================================================================================================
 #================================================ BLAST Settings ===================================================
 #===================================================================================================================
@@ -236,11 +241,27 @@ size=(105,None), expand_x=True)],
                  sg.Button('BLAST', font='AnyFont, 13'),
                  sg.Text('\n\n\n\n\n\n\n')],
 
-                [sg.Button('< Back', font='AnyFont, 10', key='-B1-'),
+                [sg.Button('< Back', font='AnyFont, 10', key='-B0-'),
                  sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
                  sg.Button('Next >', font='AnyFont, 10', key='-N1-')]
                 ]
 
+#===================================================================================================================
+# DEFINE THE LAYOUT OF THE FINALIZATION TAB =================================================================================
+#===================================================================================================================
+finalization_layout = [[sg.Image(size=(102,102), key='-IMAGE5-')],
+                       [sg.Text('The "Finalization" tab in the ANSO application provides users with convenient \
+filters to refine their results obtained from the BLAST NCBI database. Users can customize their sequence analysis \
+by adjusting parameters such as the number of sequences, percent identity range, E-value threshold, and query \
+coverage. These filters enable users to focus on a specific subset of sequences that meet their desired \
+criteria, ensuring that the final results are relevant and statistically significant. By fine-tuning these \
+parameters, researchers can efficiently extract valuable insights from their sequence analysis and streamline \
+their bioinformatics workflows.')],
+
+                       [sg.Button('< Back', font='AnyFont, 10', key='-B1-'),
+                        sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
+                        sg.Button('Next >', font='AnyFont, 10', key='-N2-')]
+                       ]
 #===================================================================================================================
 # DEFINE THE LAYOUT OF THE MSA TAB =================================================================================
 #===================================================================================================================
@@ -295,7 +316,7 @@ considering both sequence conservation and structural compatibility.', size=(105
 
               [sg.Button('< Back', font='AnyFont, 10', key='-B2-'),
                sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
-               sg.Button('Next >', font='AnyFont, 10', key='-N2-')]]
+               sg.Button('Next >', font='AnyFont, 10', key='-N3-')]]
 
 #===================================================================================================================
 # DEFINE THE LAYOUT OF THE TREE TAB ================================================================================
@@ -324,6 +345,7 @@ layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
                 [[sg.TabGroup(
                     [[sg.Tab('START', intro_layout, key='-START_TAB-'),
                       sg.Tab('BLAST', blast_layout, key='-BLAST_TAB-'),
+                      sg.Tab('FINALIZE', finalization_layout, key='-FINALIZE_TAB-'),
                       sg.Tab('MSA', msa_layout, key='-MSA_TAB-'),
                       sg.Tab('TREE', tree_layout, key='-TREE_TAB-')]],
                       size=(750,900), expand_y=True, key='-TABGROUP-'
@@ -355,11 +377,13 @@ image = ImageTk.PhotoImage(image=im)
 image2 = ImageTk.PhotoImage(image=im2)
 image3 = ImageTk.PhotoImage(image=im3)
 image4 = ImageTk.PhotoImage(image=im4)
+image5 = ImageTk.PhotoImage(image=im5)
 
 window['-IMAGE-'].update(data=image)
 window['-IMAGE2-'].update(data=image2)
 window['-IMAGE3-'].update(data=image3)
 window['-IMAGE4-'].update(data=image4)
+window['-IMAGE5-'].update(data=image5)
 
 ####################################################################################################################
 ####################################################################################################################
@@ -405,18 +429,32 @@ while True:
     if event == "-GET_STARTED-":
         print("[LOG] Went to the BLAST page")
         window['-BLAST_TAB-'].select()
-    if event == "-B1-":
-        print("[LOG] Went back to the START page")
-        window['-START_TAB-'].select()
+
     if event == "-N1-":
+        print("[LOG] Went to FINALIZE page")
+        window['-FINALIZE_TAB-'].select()
+
+    if event == "-N2-":
         print("[LOG] Went to MSA page")
         window['-MSA_TAB-'].select()
-    if event == "-B2-":
-        print("[LOG Went back to the BLAST page]")
-        window['-BLAST_TAB-'].select()
-    if event == "-N2-":
+
+    if event == "-N3-":
         print("[LOG] Went to the TREE page")
         window['-TREE_TAB-'].select()
+
+
+    if event == "-B0-":
+        print("[LOG] Went back to the START page")
+        window['-START_TAB-'].select()
+
+    if event == '-B1-':
+        print("[LOG] Went back to the BLAST page")
+        window['-BLAST_TAB-'].select()
+
+    if event == "-B2-":
+        print("[LOG] Went back to the FINALIZE page")
+        window['-FINALIZE_TAB-'].select()
+
     if event == "-B3-":
         print("[LOG Went back to the MSA page]")
         window['-MSA_TAB-'].select()
@@ -614,8 +652,8 @@ while True:
                 break
     
     # Performint the Next step -N1-
-    if event == '-N1-':
-        window['-FILENAMEMSA-'].update(file_path)
+    # if event == '-N1-':
+    #     window['-FILENAMEMSA-'].update(file_path)
 
 
     # Perofrming MSA -----------------------------------------------------------------------------------------------
