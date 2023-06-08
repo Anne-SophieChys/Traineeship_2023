@@ -184,7 +184,8 @@ size=(105,None), expand_x=True)],
                 [sg.Text('Or, upload file', font='AnyFont 9 bold'),
                 sg.VSeparator(),
                 sg.Input(enable_events=True, key='-INFILE-', expand_x=True, default_text="No file selected...", readonly=True),
-                sg.FileBrowse(key='-FILEUPLOADBLAST-')],
+                sg.FileBrowse(key='-FILEUPLOADBLAST-'),
+                sg.Button('Clear', key='-CLEARBLAST-')],
 
 
 
@@ -242,17 +243,17 @@ size=(105,None), expand_x=True)],
                  sg.Text('\n\n\n\n\n\n\n')],
 
                 [sg.Button('< Back', font='AnyFont, 10', key='-B0-'),
-                 sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
-                 sg.Button('Next >', font='AnyFont, 10', key='-N1-')]
+                 sg.Text('\t\t\t\t\t\t\t\t\t'),
+                 sg.Button('CUSTOMIZE BLAST >', font='AnyFont, 10', key='-N1-')]
                 ]
 
 #===================================================================================================================
-# DEFINE THE LAYOUT OF THE FINALIZATION TAB =================================================================================
+# DEFINE THE LAYOUT OF THE Customize TAB ===========================================================================
 #===================================================================================================================
-finalization_layout = [[sg.Image(size=(102,102), key='-IMAGE5-'),
+customize_layout = [[sg.Image(size=(102,102), key='-IMAGE5-'),
                         sg.VSeparator(),
-                        sg.Text('       Finalization of the Downloaded Document', font='AnyFont 18')],
-                       [sg.Text('The "Finalization" tab in the ANSO application provides users with convenient \
+                        sg.Text('       Customize of the Downloaded Document', font='AnyFont 18')],
+                       [sg.Text('The "Customize" tab in the ANSO application provides users with convenient \
 filters to refine their results obtained from the BLAST NCBI database. Users can customize their sequence analysis \
 by adjusting parameters such as the number of sequences, percent identity range, E-value threshold, and query \
 coverage. These filters enable users to focus on a specific subset of sequences that meet their desired \
@@ -260,20 +261,17 @@ criteria, ensuring that the final results are relevant and statistically signifi
 parameters, researchers can efficiently extract valuable insights from their sequence analysis and streamline \
 their bioinformatics workflows.', size=(105, None))],
                        
-                       [sg.Text('Load the downloaded document', font='AnyFont 12 bold')],
-                       [sg.Input(enable_events=True, key='-INFILE-', expand_x=True, default_text="No file selected...", readonly=True),
-                        sg.FileBrowse(key='-FILEUPLOADFINALIZE-')],
-
-                       [sg.Text('Below filters can be set so the document that you downloaded from the BLAST \
-can be finalized. This finalized document will be downloaded and used for the following MSA-step and for \
-building the phylogenetic tree', size=(105,None))],
-
                        [sg.Text('Filter Results', font='AnyFont 12 bold')],
+                       [sg.Text('Below filters can be set so the document that you downloaded from the BLAST \
+can be customized. This customized document will be downloaded and used for the following MSA-step and for \
+building the phylogenetic tree', size=(105,None))],
+                    
+                       [sg.HSeparator()],
 
                        [sg.Text('Specify the number of sequences:')],
                        [sg.Text('Number of sequences\t\t\t\t          ', font='AnyFont 9 bold'),
                         sg.VSeparator(),
-                        sg.Input(key='-AMOUNTSEQ-', border_width=0)],
+                        sg.Input(key='-AMOUNTSEQ-', border_width=0, size=(7,0))],
                         
                        [sg.Text('Specify the minimum and maximum percent identity:')],                       
                        [sg.Text('Percent Identity\t\t\t\t\t          ', font='AnyFont 9 bold'),
@@ -301,9 +299,9 @@ building the phylogenetic tree', size=(105,None))],
                         sg.VSeparator(),
                         sg.Input(key='-ORGANISMID-', border_width=0)],
 
-                       [sg.Text('\n\n\t\t\t\t\t     '),
-                        sg.Button('FINALIZE', font='AnyFont, 13'),
-                        sg.Text('\n\n\n\n\n\n\n\n')],
+                       [sg.Text('\t\t\t\t          '),
+                        sg.Button('CUSTOMIZE BLAST', font='AnyFont, 13'),
+                        sg.Text('\n\n\n\n\n\n\n')],
 
                        [sg.Button('< Back', font='AnyFont, 10', key='-B1-'),
                         sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
@@ -329,7 +327,8 @@ considering both sequence conservation and structural compatibility.', size=(105
               [sg.Text('Or, upload file', font='AnyFont 9 bold'),
                sg.VSeparator(),
                sg.Input(key='-FILENAMEMSA-', enable_events=True, expand_x=True, default_text="No file selected...", readonly=True),
-               sg.FileBrowse(key='-FILEUPLOADMSA-')],
+               sg.FileBrowse(key='-FILEUPLOADMSA-'),
+               sg.Button('Clear', key='-CLEARMSA-')],
               
               [sg.HSeparator()],
               [sg.Text('Set parameters', font='AnyFont 12 bold')],
@@ -392,7 +391,7 @@ layout = [[sg.MenubarCustom(menu_def, key='-MENU-',
                 [[sg.TabGroup(
                     [[sg.Tab('START', intro_layout, key='-START_TAB-'),
                       sg.Tab('BLAST', blast_layout, key='-BLAST_TAB-'),
-                      sg.Tab('FINALIZE', finalization_layout, key='-FINALIZE_TAB-'),
+                      sg.Tab('CUSTOMIZE', customize_layout, key='-CUSTOMIZE_TAB-'),
                       sg.Tab('MSA', msa_layout, key='-MSA_TAB-'),
                       sg.Tab('TREE', tree_layout, key='-TREE_TAB-')]],
                       size=(750,900), expand_y=True, key='-TABGROUP-'
@@ -478,8 +477,8 @@ while True:
         window['-BLAST_TAB-'].select()
 
     if event == "-N1-":
-        print("[LOG] Went to FINALIZE page")
-        window['-FINALIZE_TAB-'].select()
+        print("[LOG] Went to CUSTOMIZE page")
+        window['-CUSTOMIZE_TAB-'].select()
 
     if event == "-N2-":
         print("[LOG] Went to MSA page")
@@ -488,7 +487,6 @@ while True:
     if event == "-N3-":
         print("[LOG] Went to the TREE page")
         window['-TREE_TAB-'].select()
-
 
     if event == "-B0-":
         print("[LOG] Went back to the START page")
@@ -499,15 +497,23 @@ while True:
         window['-BLAST_TAB-'].select()
 
     if event == "-B2-":
-        print("[LOG] Went back to the FINALIZE page")
-        window['-FINALIZE_TAB-'].select()
+        print("[LOG] Went back to the CUSTOMIZE page")
+        window['-CUSTOMIZE_TAB-'].select()
 
     if event == "-B3-":
         print("[LOG Went back to the MSA page]")
         window['-MSA_TAB-'].select()
+    
+    if event == "-CLEARBLAST-":
+        window['-INFILE-'].update('')
+
+    if event == "-CLEARMSA-":
+        window['-FILENAMEMSA-'].update('')
 
 
-# BLAST type buttons -----------------------------------------------------------------------------------------------
+#===================================================================================================================
+# DEFINE THE EVENTS OF THE BLAST LAYOUT ============================================================================
+#===================================================================================================================
     select_button1 = '-BLASTN-'
     select_button2 = '-BLASTP-'
     select_button3 = '-BLASTX-'
@@ -559,7 +565,7 @@ while True:
         window['-DBBLASTP-'].update(visible=False)
 
 # Performing the BLAST ---------------------------------------------------------------------------------------------
-    if event == "BLAST":
+    if event == "BLAST" or event == "CUSTOMIZED BLAST":
         print("[LOG] Started the 'BLAST'")
 
         
@@ -662,6 +668,33 @@ while True:
 
         while max_wait_time > 0:
             try:
+                #===================================================================================================================
+                # DEFINE THE EVENTS OF THE CUSTOMIZE LAYOUT =====================================================================
+                #===================================================================================================================
+
+                # Input information about '-PERCENTIDMIN-':
+                prcLow_element = wait.until(EC.presence_of_element_located((By.ID, 'prcLow')))
+                prcLow_element.send_keys(values['-PERCENTIDMIN-'])
+                driver.find_element(By.ID, 'prcLow').send_keys(values['-PERCENTIDMIN-'])
+                # Input information about '-PERCENTIDMAX-':
+                driver.find_element(By.ID, 'prcHigh').send_keys(values['-PERCENTIDMAX-'])
+                # Input information about 'EVALUEMIN-':
+                driver.find_element(By.ID, 'expLow').send_keys(values['-EVALUEMIN-'])
+                # Input information about '-EVALUEMIN-':
+                driver.find_element(By.ID, 'expLow').send_keys(values['-EVALUEMIN-'])
+                # Input information about '-EVALUEMAX-':
+                driver.find_element(By.ID, 'expHigh').send_keys(values['-EVALUEMAX-'])
+                # Input information about '-QUERYCOVERAGEMIN-':
+                driver.find_element(By.ID, 'qcLow').send_keys(values['-QUERYCOVERAGEMIN-'])
+                # Input information about '-QUERYCOVERAGEMAX-':
+                driver.find_element(By.ID, 'qcHigh').send_keys(values['-QUERYCOVERAGEMAX-'])
+                # Input information about '-ORGANISMID-':
+                driver.find_element(By.ID, 'qorganism').send_keys(values['-ORGANISMID-'])
+                ExecuteFilter = driver.find_element(By.ID, 'btnFilter')
+                ExecuteFilter.click()
+                print('[LOG] Filtering has started')
+
+                # Download the file
                 download_button = wait.until(EC.element_to_be_clickable((By.ID, "btnDwnld")))
                 download_button.click()
                 print("[LOG] Clicked on the Download button")
@@ -675,7 +708,12 @@ while True:
                 max_wait_time -= update_interval
                 continue
         
-        # driver.quit()
+
+    
+        
+
+    # BY DOWNLOADING, FIRST SPECIFY ON -AMOUNTSEQ-, THEN DOWNLOAD!
+    #-------------------------------------------------------------------------------------------------
 
         # Display the output file
         file_path = os.path.expanduser("~/Downloads/seqdump.txt")
@@ -697,13 +735,14 @@ while True:
             if popup_event == '-POPUP-FINISH-' or popup_event == sg.WINDOW_CLOSED:
                 popup_window.close()
                 break
-    
-    # Performint the Next step -N1-
-    # if event == '-N1-':
-    #     window['-FILENAMEMSA-'].update(file_path)
 
-
-    # Perofrming MSA -----------------------------------------------------------------------------------------------
+            # driver.quit()
+        # Performint the Next step -N1-
+        # if event == '-N1-':
+        #     window['-FILENAMEMSA-'].update(file_path)
+#===================================================================================================================
+# DEFINE THE EVENTS OF THE MSA LAYOUT ==============================================================================
+#===================================================================================================================
     if event == 'MSA':
         print("[LOG] Clicked 'MSA'")
 
