@@ -237,7 +237,7 @@ size=(105,None), expand_x=True)],
                  sg.VSeparator(),
                  sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
 
-                [sg.Text('\t\t\t\t\t       '),
+                [sg.Text('\t\t\t\t\t        '),
                  sg.Button('BLAST', font='AnyFont, 13'),
                  sg.Text('\n\n\n\n\n\n\n')],
 
@@ -249,14 +249,61 @@ size=(105,None), expand_x=True)],
 #===================================================================================================================
 # DEFINE THE LAYOUT OF THE FINALIZATION TAB =================================================================================
 #===================================================================================================================
-finalization_layout = [[sg.Image(size=(102,102), key='-IMAGE5-')],
+finalization_layout = [[sg.Image(size=(102,102), key='-IMAGE5-'),
+                        sg.VSeparator(),
+                        sg.Text('       Finalization of the Downloaded Document', font='AnyFont 18')],
                        [sg.Text('The "Finalization" tab in the ANSO application provides users with convenient \
 filters to refine their results obtained from the BLAST NCBI database. Users can customize their sequence analysis \
 by adjusting parameters such as the number of sequences, percent identity range, E-value threshold, and query \
 coverage. These filters enable users to focus on a specific subset of sequences that meet their desired \
 criteria, ensuring that the final results are relevant and statistically significant. By fine-tuning these \
 parameters, researchers can efficiently extract valuable insights from their sequence analysis and streamline \
-their bioinformatics workflows.')],
+their bioinformatics workflows.', size=(105, None))],
+                       
+                       [sg.Text('Load the downloaded document', font='AnyFont 12 bold')],
+                       [sg.Input(enable_events=True, key='-INFILE-', expand_x=True, default_text="No file selected...", readonly=True),
+                        sg.FileBrowse(key='-FILEUPLOADFINALIZE-')],
+
+                       [sg.Text('Below filters can be set so the document that you downloaded from the BLAST \
+can be finalized. This finalized document will be downloaded and used for the following MSA-step and for \
+building the phylogenetic tree', size=(105,None))],
+
+                       [sg.Text('Filter Results', font='AnyFont 12 bold')],
+
+                       [sg.Text('Specify the number of sequences:')],
+                       [sg.Text('Number of sequences\t\t\t\t          ', font='AnyFont 9 bold'),
+                        sg.VSeparator(),
+                        sg.Input(key='-AMOUNTSEQ-', border_width=0)],
+                        
+                       [sg.Text('Specify the minimum and maximum percent identity:')],                       
+                       [sg.Text('Percent Identity\t\t\t\t\t          ', font='AnyFont 9 bold'),
+                        sg.VSeparator(),
+                        sg.Input(key='-PERCENTIDMIN-', border_width=0, size=(7,0)),
+                        sg.Text('to'),
+                        sg.Input(key='-PERCENTIDMAX-', border_width=0, size=(7,0))], 
+
+                       [sg.Text('Specify the minimum and maximum E value:')],                       
+                       [sg.Text('E value\t\t\t\t\t\t          ', font='AnyFont 9 bold'),
+                        sg.VSeparator(),
+                        sg.Input(key='-EVALUEMIN-', border_width=0, size=(7,0)),
+                        sg.Text('to'),
+                        sg.Input(key='-EVALUEMAX-', border_width=0, size=(7,0))],
+
+                        [sg.Text('Specify the minimum and maximum query coverage:')],                       
+                        [sg.Text('Query Coverage\t\t\t\t\t          ', font='AnyFont 9 bold'),
+                        sg.VSeparator(),
+                        sg.Input(key='-QUERYCOVERAGEMIN-', border_width=0, size=(7,0)),
+                        sg.Text('to'),
+                        sg.Input(key='-QUERYCOVERAGEMAX-', border_width=0, size=(7,0))],
+
+                        [sg.Text('Specify the organism:')],                       
+                        [sg.Text('Organism\t\t\t\t\t          ', font='AnyFont 9 bold'),
+                        sg.VSeparator(),
+                        sg.Input(key='-ORGANISMID-', border_width=0)],
+
+                       [sg.Text('\n\n\t\t\t\t\t     '),
+                        sg.Button('FINALIZE', font='AnyFont, 13'),
+                        sg.Text('\n\n\n\n\n\n\n\n')],
 
                        [sg.Button('< Back', font='AnyFont, 10', key='-B1-'),
                         sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
@@ -309,7 +356,7 @@ considering both sequence conservation and structural compatibility.', size=(105
               [sg.Text('Order')],
               [sg.Combo(values=('aligned', 'input'), default_value='aligned', key='-ORDER-', size=(20,0), readonly=True)],
               
-              [sg.Text('\n\n\t\t\t\t\t\t'),
+              [sg.Text('\n\n\t\t\t\t\t         '),
                sg.Button('MSA', font='AnyFont, 13'),
                sg.Text('\n\n\n\n\n\n\n\n')],
 
