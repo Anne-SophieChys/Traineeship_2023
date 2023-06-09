@@ -187,8 +187,6 @@ size=(105,None), expand_x=True)],
                 sg.FileBrowse(key='-FILEUPLOADBLAST-'),
                 sg.Button('Clear', key='-CLEARBLAST-')],
 
-
-
                 [sg.Text('Job Title\t          ', font='AnyFont 9 bold'),
                  sg.VSeparator(),
                  sg.Input(key='-JOBTITLE-', border_width=0)],
@@ -238,9 +236,7 @@ size=(105,None), expand_x=True)],
                  sg.VSeparator(),
                  sg.Input(key='-THRESHOLD-', size=(5,0), default_text=0.05)],
 
-                [sg.Text('\t\t\t\t\t        '),
-                 sg.Button('BLAST', font='AnyFont, 13'),
-                 sg.Text('\n\n\n\n\n\n\n')],
+                [sg.Text('\n\n\n\n\n\n\n')],
 
                 [sg.Button('< Back', font='AnyFont, 10', key='-B0-'),
                  sg.Text('\t\t\t\t\t\t\t\t\t'),
@@ -299,8 +295,8 @@ building the phylogenetic tree', size=(105,None))],
                         sg.VSeparator(),
                         sg.Input(key='-ORGANISMID-', border_width=0)],
 
-                       [sg.Text('\t\t\t\t          '),
-                        sg.Button('CUSTOMIZE BLAST', font='AnyFont, 13'),
+                       [sg.Text('\t\t\t\t\t        '),
+                        sg.Button('BLAST', font='AnyFont, 13'),
                         sg.Text('\n\n\n\n\n\n\n')],
 
                        [sg.Button('< Back', font='AnyFont, 10', key='-B1-'),
@@ -565,7 +561,7 @@ while True:
         window['-DBBLASTP-'].update(visible=False)
 
 # Performing the BLAST ---------------------------------------------------------------------------------------------
-    if event == "BLAST" or event == "CUSTOMIZED BLAST":
+    if event == "BLAST":
         print("[LOG] Started the 'BLAST'")
 
         
@@ -586,14 +582,13 @@ while True:
                                  keep_on_top=True, auto_size_text=True)
 
     
-
-
         for _ in range (1):
             popup_window['-EMOJI_DREAMING-'].update(visible=True)
             popup_window['-EMOJI_HAPPY-'].update(visible=False)
 
 
         # Ask for input --------------------------------
+        # programtype = 'blastn'
         program = programtype
         location = url + "?PROGRAM=" + program + "&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome"
         print(location)
@@ -617,9 +612,71 @@ while True:
         jobtitle = driver.find_element(By.NAME, "JOB_TITLE")
         jobtitle.send_keys(inputjobtitle)
 
+        # Get information about the -DBBLASTP-
+        if values['-DBBLASTP-'] == 'Non-redundant protein sequences (nr)':
+            values['-DBBLASTP-'] = 'N'
+        if values['-DBBLASTP-'] == 'RefSeq Select proteins (refseq_select)':
+            values['-DBBLASTP-'] = 'R'
+        if values['-DBBLASTP-'] == 'Reference proteins (refseq_protein)':
+            values['-DBBLASTP-'] = 'RR'
+        if values['-DBBLASTP-'] == 'Model Organisms (landmark)':
+            values['-DBBLASTP-'] = 'M'
+        if values['-DBBLASTP-'] == 'UniProtKB/Swiss-Prot(swissprot)':
+            values['-DBBLASTP-'] = 'U'
+        if values['-DBBLASTP-'] == 'Patented protein sequences(pataa)':
+            values['-DBBLASTP-'] = 'P'
+        if values['-DBBLASTP-'] == 'Protein Data Bank proteins(pdb)':
+            values['-DBBLASTP-'] = 'PP'
+        if values['-DBBLASTP-'] == 'Metagenomic proteins(env_nr)':
+            values['-DBBLASTP-'] = 'MM'
+        if values['-DBBLASTP-'] == 'Transcriptome Shotgun Assembly proteins (tsa_nr)':
+            values['-DBBLASTP-'] = 'T'
+
+            
+        # Get information about the -DBBLASTN-
+        if values['-DBBLASTN-'] == 'Nucleotide collection (nr/nt)':
+            values['-DBBLASTN-'] = 'N'
+        if values['-DBBLASTN-'] == 'RefSeq Select RNA sequences (refseq_select)':
+            values['-DBBLASTN-'] = 'R'
+        if values['-DBBLASTN-'] == 'Reference RNA sequences (refseq_rna)':
+            values['-DBBLASTN-'] = 'RR'
+        if values['-DBBLASTN-'] == 'RefSeq Representative genomes (refseq_representative_genomes)':
+            values['-DBBLASTN-'] = 'RRR'
+        if values['-DBBLASTN-'] == 'RefSeq Genome Database (refseq_genomes)':
+            values['-DBBLASTN-'] = 'RRRR'
+        if values['-DBBLASTN-'] == 'Whole-genome shotgun contigs (wgs)':
+            values['-DBBLASTN-'] = 'W'
+        if values['-DBBLASTN-'] == 'Expressed sequence tags (est)':
+            values['-DBBLASTN-'] = 'E'
+        if values['-DBBLASTN-'] == 'Sequence Read Archive (SRA)':
+            values['-DBBLASTN-'] = 'S'
+        if values['-DBBLASTN-'] == 'Transcriptome Shotgun Assembly (TSA)':
+            values['-DBBLASTN-'] = 'T'
+        if values['-DBBLASTN-'] == 'Targeted Loci(TLS)':
+            values['-DBBLASTN-'] = 'TT'
+        if values['-DBBLASTN-'] == 'High throughput genomic sequences (HTGS)':
+            values['-DBBLASTN-'] = 'H'
+        if values['-DBBLASTN-'] == 'Patent sequences(pat)':
+            values['-DBBLASTN-'] = 'P'
+        if values['-DBBLASTN-'] == 'PDB nucleotide database (pdb)':
+            values['-DBBLASTN-'] = 'PP'
+        if values['-DBBLASTN-'] == 'Human RefSeqGene sequences(RefSeq_Gene)':
+            values['-DBBLASTN-'] = 'HH'
+        if values['-DBBLASTN-'] == 'Genomic survey sequences (gss)':
+            values['-DBBLASTN-'] = 'G'
+        if values['-DBBLASTN-'] == 'Sequence tagged sites (dbsts)':
+            values['-DBBLASTN-'] = 'SS'
+
+        # BLAST P works because it is the standard
+        # if event == '-BLASTN-':
+        #     inputdatabase = values['-DBBLASTN-']
+        # else:
+        #     inputdatabase = values['-DBBLASTP-']
+
         inputdatabasebutton = driver.find_element(By.ID, "DATABASE")
         inputdatabasebutton.click()
-        inputdatabase = values['-DBBLASTP-']
+        # BLAST N works because it is the standard
+        inputdatabase = values['-DBBLASTN-']
         database = driver.find_element(By.ID, "DATABASE")
         database.send_keys(inputdatabase)
 
@@ -654,7 +711,8 @@ while True:
         blast.click()
         print('[LOG] Blast has started')
 
-        max_wait_time = 99999
+        max_wait_time_filter = 99999
+        max_wait_time_download = 99999
         update_interval = 5
 
         wait = WebDriverWait(driver, update_interval)
@@ -666,20 +724,19 @@ while True:
             print('There went something wrong, try again later...')
             pass
 
-        while max_wait_time > 0:
+        while max_wait_time_filter > 0:
             try:
                 #===================================================================================================================
                 # DEFINE THE EVENTS OF THE CUSTOMIZE LAYOUT =====================================================================
                 #===================================================================================================================
-
+                
                 # Input information about '-PERCENTIDMIN-':
                 prcLow_element = wait.until(EC.presence_of_element_located((By.ID, 'prcLow')))
                 prcLow_element.send_keys(values['-PERCENTIDMIN-'])
-                driver.find_element(By.ID, 'prcLow').send_keys(values['-PERCENTIDMIN-'])
                 # Input information about '-PERCENTIDMAX-':
                 driver.find_element(By.ID, 'prcHigh').send_keys(values['-PERCENTIDMAX-'])
                 # Input information about 'EVALUEMIN-':
-                driver.find_element(By.ID, 'expLow').send_keys(values['-EVALUEMIN-'])
+                driver.find_element(By.ID, 'expHigh').send_keys(values['-EVALUEMAX-'])
                 # Input information about '-EVALUEMIN-':
                 driver.find_element(By.ID, 'expLow').send_keys(values['-EVALUEMIN-'])
                 # Input information about '-EVALUEMAX-':
@@ -693,7 +750,14 @@ while True:
                 ExecuteFilter = driver.find_element(By.ID, 'btnFilter')
                 ExecuteFilter.click()
                 print('[LOG] Filtering has started')
-
+                break
+          
+            except TimeoutException:
+                max_wait_time_filter -= update_interval
+                continue
+        
+        while max_wait_time_download > 0:
+            try:
                 # Download the file
                 download_button = wait.until(EC.element_to_be_clickable((By.ID, "btnDwnld")))
                 download_button.click()
@@ -703,15 +767,11 @@ while True:
                 time.sleep(5)
                 print("[LOG] The file has been downloaded")
                 break
-            
+
             except TimeoutException:
-                max_wait_time -= update_interval
+                max_wait_time_download -= update_interval
                 continue
         
-
-    
-        
-
     # BY DOWNLOADING, FIRST SPECIFY ON -AMOUNTSEQ-, THEN DOWNLOAD!
     #-------------------------------------------------------------------------------------------------
 
