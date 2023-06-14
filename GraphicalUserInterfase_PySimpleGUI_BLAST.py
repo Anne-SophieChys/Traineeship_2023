@@ -429,6 +429,18 @@ window['-IMAGE5-'].update(data=image5)
 
 ####################################################################################################################
 ####################################################################################################################
+#                                                 Define function                                                  #
+####################################################################################################################
+####################################################################################################################
+# Define the latest file to display in the output
+def get_latest_file(directory):
+    files = [os.path.join(directory, f) for f in os.listdir(directory)]
+    files = [f for f in files if os.path.isfile(f)]
+    latest_file = max(files, key=os.path.getmtime)
+    return latest_file
+
+####################################################################################################################
+####################################################################################################################
 #                                                   Event loop                                                     #
 ####################################################################################################################
 ####################################################################################################################
@@ -667,6 +679,13 @@ while True:
         if values['-DBBLASTN-'] == 'Sequence tagged sites (dbsts)':
             values['-DBBLASTN-'] = 'SS'
 
+        # while event == 'BLASTN':
+        #     try:
+        #         inputdatabase = values['-DBBLASTN-']
+        #     except event == 'BLASTP':
+        #         inputdatabase = values['-DBBLASTP-']
+        #         continue
+    
         # BLAST P works because it is the standard
         # if event == '-BLASTN-':
         #     inputdatabase = values['-DBBLASTN-']
@@ -676,7 +695,7 @@ while True:
         inputdatabasebutton = driver.find_element(By.ID, "DATABASE")
         inputdatabasebutton.click()
         # BLAST N works because it is the standard
-        inputdatabase = values['-DBBLASTN-']
+        inputdatabase = values['-DBBLASTP-']
         database = driver.find_element(By.ID, "DATABASE")
         database.send_keys(inputdatabase)
 
@@ -721,7 +740,7 @@ while True:
             driver.find_element(By.ID, "type-a")
             wait.until(EC.staleness_of(driver.find_element(By.ID, "type-a")))
         except:
-            print('There went something wrong, try again later...')
+            print('There went someQ5thing wrong, try again later...')
             pass
 
         while max_wait_time_filter > 0:
@@ -776,6 +795,7 @@ while True:
     #-------------------------------------------------------------------------------------------------
 
         # Display the output file
+
         file_path = os.path.expanduser("~/Downloads/seqdump.txt")
         if os.path.exists(file_path):
             with open(file_path, 'r') as file:
@@ -864,5 +884,37 @@ while True:
         ExecuteMSA = driver.find_element(By.XPATH, '//*[@id="jd_submitButtonPanel"]/input')
         ExecuteMSA.click()
         print('[LOG] MSA has started')
+
+
+        max_wait_time_msa = 99999
+        update_interval_msa = 5
+
+        wait_msa = WebDriverWait(driver, update_interval_msa)
+
+        try:
+            driver.find_element(By.ID, "alignmentContent")
+            wait_msa.until(EC.staleness_of(driver.find_element(By.ID, "alignmentContent")))
+        except:
+            print('There went something wrong, try again later...')
+            pass
+        
+        while max_wait_time_msa > 0:
+            try:
+                # Download the file
+                wait_msa.until(EC.element_to_be_clickable((By.ID, "alignmentContent")))
+                alignmentcontent = driver.find_element_by_id('alignmentContent').text
+                import tkinter as tk
+                window_tk = tk.Tk()
+                text = tk.Text(window_tk)
+                text.insert(tk.END, alignmentcontent)
+                text.pack()
+                window.mainloop()
+
+
+                break
+
+            except TimeoutException:
+                max_wait_time_msa -= update_interval_msa
+                continue
 
 # window.close()
