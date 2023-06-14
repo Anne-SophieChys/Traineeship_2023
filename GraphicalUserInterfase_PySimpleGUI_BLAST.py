@@ -45,6 +45,11 @@ size = (102,102)
 im5 = Image.open(imageDocument_pah)
 im5 = im5.resize(size, resample=Image.BICUBIC)
 
+imageTree_path = os.path.join(script_dir, "./Brand/Tree.png")
+size = (100,142)
+im6 = Image.open(imageTree_path)
+im6 = im6.resize(size, resample=Image.BICUBIC)
+
 #===================================================================================================================
 #================================================ BLAST Settings ===================================================
 #===================================================================================================================
@@ -297,7 +302,7 @@ building the phylogenetic tree', size=(105,None))],
 
                        [sg.Text('\t\t\t\t\t        '),
                         sg.Button('BLAST', font='AnyFont, 13'),
-                        sg.Text('\n\n\n\n\n\n\n')],
+                        sg.Text('\n\n\n\n\n\n\n\n\n\n\n\n')],
 
                        [sg.Button('< Back', font='AnyFont, 10', key='-B1-'),
                         sg.Text('\t\t\t\t\t\t\t\t\t\t     '),
@@ -363,8 +368,30 @@ considering both sequence conservation and structural compatibility.', size=(105
 #===================================================================================================================
 # DEFINE THE LAYOUT OF THE TREE TAB ================================================================================
 #===================================================================================================================
-tree_layout = [[sg.Text('This is the Tree layout')],
+tree_layout = [[sg.Image(size=(100,142), key='-IMAGE6-'),
+                sg.VSeparator(),
+                sg.Text('       Building Phylogenetic Tree', font='AnyFont 18')],
+               [sg.Text('In addition to its existing functionalities, the ANSO application also \
+offers the capability to build phylogenetic trees using the neighborhood joining method with \
+Clustal Omega. This new feature allows users to analyze the evolutionary relationships among their \
+sequences and gain insights into their genetic similarities and divergence. By integrating the \
+tree-building functionality, ANSO provides a comprehensive toolkit for sequence analysis and \
+interpretation.', size=(105,None))],
+
+              [sg.HSeparator()],
+
+              [sg.Frame('Visual Tree Output', 
+                        [[sg.T(size=(103,24), background_color='white',)]])],
+
+
+              [sg.Text('\n\n\t\t\t\t\t       '),
+               sg.Button('BUILD', font='AnyFont, 13'),
+               sg.Text('\n\n\n\n\n\n\n\n')],
+
+
                [sg.Button('< Back', font='AnyFont, 10', key='-B3-')]]
+
+
 
 #===================================================================================================================
 # DEFINE THE LAYOUT OF THE LOG AND THE OUTPUT ======================================================================
@@ -420,12 +447,14 @@ image2 = ImageTk.PhotoImage(image=im2)
 image3 = ImageTk.PhotoImage(image=im3)
 image4 = ImageTk.PhotoImage(image=im4)
 image5 = ImageTk.PhotoImage(image=im5)
+image6 = ImageTk.PhotoImage(image=im6)
 
 window['-IMAGE-'].update(data=image)
 window['-IMAGE2-'].update(data=image2)
 window['-IMAGE3-'].update(data=image3)
 window['-IMAGE4-'].update(data=image4)
 window['-IMAGE5-'].update(data=image5)
+window['-IMAGE6-'].update(data=image6)
 
 ####################################################################################################################
 ####################################################################################################################
