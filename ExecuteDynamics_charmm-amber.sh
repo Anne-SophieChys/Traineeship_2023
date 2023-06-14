@@ -1,13 +1,16 @@
 #!/bin/bash
-
 # Specify the directory to start with
 for dir in charmm*;
 do
+	# Go into the charmm directory
 	cd "$dir"
+	echo "Went into the $dir directory"
+	
 	for subdir in charmm*;
 	do
-		# Go into the 'amber' directory
+		# Go into the second charmm and amber directory
 		cd "$subdir/amber"
+		echo "Went into the $subdir/amber directory"
 		
 		# Check for the README file
 		if [ -f "README" ];
