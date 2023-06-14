@@ -380,18 +380,13 @@ interpretation.', size=(105,None))],
 
               [sg.HSeparator()],
 
-              [sg.Frame('Visual Tree Output', 
-                        [[sg.T(size=(103,24), background_color='white',)]])],
-
+              [sg.Frame('Visual Tree Output', [[sg.T(size=(103,24), background_color='white',)]])],
 
               [sg.Text('\n\n\t\t\t\t\t       '),
                sg.Button('BUILD', font='AnyFont, 13'),
                sg.Text('\n\n\n\n\n\n\n\n')],
 
-
                [sg.Button('< Back', font='AnyFont, 10', key='-B3-')]]
-
-
 
 #===================================================================================================================
 # DEFINE THE LAYOUT OF THE LOG AND THE OUTPUT ======================================================================
@@ -770,7 +765,7 @@ while True:
             driver.find_element(By.ID, "type-a")
             wait.until(EC.staleness_of(driver.find_element(By.ID, "type-a")))
         except:
-            print('There went someQ5thing wrong, try again later...')
+            print('There went something wrong, try again later...')
             pass
 
         while max_wait_time_filter > 0:
@@ -922,36 +917,32 @@ while True:
         ExecuteMSA.click()
         print('[LOG] MSA has started')
 
+        max_wait_time_msa = 99999
+        update_interval_msa = 5
 
-        # max_wait_time_msa = 99999
-        # update_interval_msa = 5
+        wait_msa = WebDriverWait(driver, update_interval_msa)
 
-        # wait_msa = WebDriverWait(driver, update_interval_msa)
-
-        # try:
-        #     driver.find_element(By.ID, "alignmentContent")
-        #     wait_msa.until(EC.staleness_of(driver.find_element(By.ID, "alignmentContent")))
-        # except:
-        #     print('There went something wrong, try again later...')
-        #     pass
+        try:
+            driver.find_element(By.ID, "alignmentContent")
+            wait_msa.until(EC.staleness_of(driver.find_element(By.ID, "alignmentContent")))
+        except:
+            print('There went something wrong, try again later...')
+            pass
         
-        # while max_wait_time_msa > 0:
-        #     try:
-        #         # Download the file
-        #         wait_msa.until(EC.element_to_be_clickable((By.ID, "alignmentContent")))
-        #         alignmentcontent = driver.find_element_by_id('alignmentContent').text
-        #         import tkinter as tk
-        #         window_tk = tk.Tk()
-        #         text = tk.Text(window_tk)
-        #         text.insert(tk.END, alignmentcontent)
-        #         text.pack()
-        #         window.mainloop()
+        while max_wait_time_msa > 0:
+            try:
+                # Download the file
+                summary_button = wait_msa.until(EC.element_to_be_clickable((By.ID, "summary")))
+                summary_button.click()
+                clustal_num = driver.find_element(By.XPATH, '//*[@id="links"]/dl/dd[3]/a')
+                clustal_num.click()
+                driver.back()
+                clustal_ph = driver.find_element(By.XPATH, '//*[@id="links"]/dl/dd[5]/a')
+                clustal_ph.click()
+                break
 
-
-        #         break
-
-        #     except TimeoutException:
-        #         max_wait_time_msa -= update_interval_msa
-        #         continue
+            except TimeoutException:
+                max_wait_time_msa -= update_interval_msa
+                continue
 
 # window.close()
