@@ -380,7 +380,7 @@ interpretation.', size=(105,None))],
 
               [sg.HSeparator()],
 
-              [sg.Frame('Visual Tree Output', [[sg.T(size=(103,24), background_color='white',)]])],
+              [sg.Frame('Visual Tree Output', [[sg.T(size=(103,24), background_color='white', key="-VISUALTREE-")]])],
 
               [sg.Text('\n\n\t\t\t\t\t       '),
                sg.Button('BUILD', font='AnyFont, 13'),
@@ -936,13 +936,24 @@ while True:
                 summary_button.click()
                 clustal_num = driver.find_element(By.XPATH, '//*[@id="links"]/dl/dd[3]/a')
                 clustal_num.click()
-                driver.back()
-                clustal_ph = driver.find_element(By.XPATH, '//*[@id="links"]/dl/dd[5]/a')
-                clustal_ph.click()
+                time.sleep(5)
+
+                # time.sleep(1)
+                # driver.back()
+                clustal_treecode = driver.find_element(By.XPATH, '//*[@id="link"/dl/dd[5]/a')
+                clustal_treecode.click()
+
+                # clustal_ph = driver.find_element(By.XPATH, '//*[@id="links"]/dl/dd[5]/a')
+                # clustal_ph.click()
                 break
 
             except TimeoutException:
                 max_wait_time_msa -= update_interval_msa
                 continue
-
+        
+        # visualtree_filepath = os.path.expanduser("~/Downloads/clustalo*p1m.clustal_num")
+        # if os.path.exists(visualtree_filepath):
+        #     with open(visualtree_filepath, 'r') as file:
+        #         file_contentvisualtree = file.read()
+        # window['-VISUALTREE-'].update(file_contentvisualtree)
 # window.close()
