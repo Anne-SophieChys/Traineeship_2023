@@ -381,7 +381,7 @@ interpretation.', size=(105,None))],
 
               [sg.HSeparator()],
 
-              [sg.Frame('Visual Tree Output', [[sg.T(size=(103,24), background_color='#E6E6E6', key="-VISUALTREE-")]])],
+              [sg.Frame('Visual Tree Output', [[sg.T(size=(103,24), background_color='#F7F3EC', key="-VISUALTREE-")]])],
 
               [sg.Text('\n\n\t\t\t\t\t       '),
                sg.Button('BUILD', font='AnyFont, 13'),
@@ -806,11 +806,13 @@ while True:
                 # Download the file
                 download_button = wait.until(EC.element_to_be_clickable((By.ID, "btnDwnld")))
                 download_button.click()
+                time.sleep(1)
                 print("[LOG] Clicked on the Download button")
                 download_button2 = driver.find_element(By.ID, 'dwFST')
                 download_button2.click()
-                time.sleep(5)
+                time.sleep(3)
                 print("[LOG] The file has been downloaded")
+                driver.close
                 break
 
             except TimeoutException:
@@ -937,23 +939,31 @@ while True:
                 summary_button.click()
                 clustal_num = wait_msa.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="links"]/dl/dd[3]/a')))
                 clustal_num.click()
-                time.sleep(5)
+                time.sleep(1)
                 clustal_treecodepage = wait_msa.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="links"]/dl/dd[5]/a')))
                 clustal_treecodepage.click()
-                time.sleep(5)
+                time.sleep(1)
                 import pyautogui
                 pyautogui.hotkey('ctrl', 's')
                 pyautogui.press('enter')
-
                 break
 
             except TimeoutException:
                 max_wait_time_msa -= update_interval_msa
                 continue
         
-        # visualtree_filepath = os.path.expanduser("~/Downloads/clustalo*p1m.clustal_num")
-        # if os.path.exists(visualtree_filepath):
-        #     with open(visualtree_filepath, 'r') as file:
-        #         file_contentvisualtree = file.read()
-        # window['-VISUALTREE-'].update(file_contentvisualtree)
+        clustal_treecode_path = os.path.expanduser("~/Downloads/clustalo*plm.ph")
+        if os.path.exists(clustal_treecode_path):
+            with open(clustal_treecode_path, 'r') as file:
+                file_contentcodetree = file.read()
+            window['-OUTPUT-'].update(file_contentcodetree)
+
+
+        # file_path = os.path.expanduser("~/Downloads/seqdump.txt")
+        # if os.path.exists(file_path):
+        #     with open(file_path, 'r') as file:
+        #         file_content = file.read()
+        # window['-OUTPUT-'].update(file_content)
+
+
 # window.close()
