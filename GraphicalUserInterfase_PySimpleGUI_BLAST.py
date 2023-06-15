@@ -7,6 +7,7 @@
 
 # Installations ----------------------------------------------------------------------------------------------------
 # pip install pysimplegui (v4.60.4)
+# pip install pyautogui (v0.9.54)
 
 # Load the packages ------------------------------------------------------------------------------------------------
 import PySimpleGUI as sg
@@ -380,7 +381,7 @@ interpretation.', size=(105,None))],
 
               [sg.HSeparator()],
 
-              [sg.Frame('Visual Tree Output', [[sg.T(size=(103,24), background_color='white', key="-VISUALTREE-")]])],
+              [sg.Frame('Visual Tree Output', [[sg.T(size=(103,24), background_color='#E6E6E6', key="-VISUALTREE-")]])],
 
               [sg.Text('\n\n\t\t\t\t\t       '),
                sg.Button('BUILD', font='AnyFont, 13'),
@@ -934,17 +935,16 @@ while True:
                 # Download the file
                 summary_button = wait_msa.until(EC.element_to_be_clickable((By.ID, "summary")))
                 summary_button.click()
-                clustal_num = driver.find_element(By.XPATH, '//*[@id="links"]/dl/dd[3]/a')
+                clustal_num = wait_msa.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="links"]/dl/dd[3]/a')))
                 clustal_num.click()
                 time.sleep(5)
+                clustal_treecodepage = wait_msa.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="links"]/dl/dd[5]/a')))
+                clustal_treecodepage.click()
+                time.sleep(5)
+                import pyautogui
+                pyautogui.hotkey('ctrl', 's')
+                pyautogui.press('enter')
 
-                # time.sleep(1)
-                # driver.back()
-                clustal_treecode = driver.find_element(By.XPATH, '//*[@id="link"/dl/dd[5]/a')
-                clustal_treecode.click()
-
-                # clustal_ph = driver.find_element(By.XPATH, '//*[@id="links"]/dl/dd[5]/a')
-                # clustal_ph.click()
                 break
 
             except TimeoutException:
