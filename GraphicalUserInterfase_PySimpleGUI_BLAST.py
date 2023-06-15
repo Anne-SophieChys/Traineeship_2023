@@ -394,7 +394,7 @@ interpretation.', size=(105,None))],
 #===================================================================================================================
 # Define the layout of the log tab and the output
 output_layout = [[sg.Text('\t\t              OUTPUT', font='AnyFont 18')],
-                 [sg.Multiline(size=(115,48), font='Courier 8', key='-OUTPUT-', autoscroll=False,
+                 [sg.Multiline(size=(150,48), font='Courier 8', key='-OUTPUT-', autoscroll=False,
                                write_only=True, auto_refresh=True)],
                  [sg.Text('\n\n\n\t\t\t\t\t      '),sg.Button('Exit', font='AnyFont, 12')]]
                             
@@ -434,7 +434,7 @@ def main():
 # Create the window ------------------------------------------------------------------------------------------------
 window = sg.Window('Graphical User Interphase', layout,
                    grab_anywhere=True,
-                   size=(1500,900), use_custom_titlebar=True,
+                   size=(1520,900), use_custom_titlebar=True,
                    finalize=True, keep_on_top=False)            # SET THIS ON TRUE AGAIN IF THE BLAST
     
 # Convert im to ImageTK.PhotoImage after window finalized
@@ -470,12 +470,14 @@ window['-IMAGE6-'].update(data=image6)
 #                                                   Event loop                                                     #
 ####################################################################################################################
 ####################################################################################################################
+import glob                                                         # Usage of glob module to use wildcard patterns in filenames
+import pyautogui                                                    # Send keys like CONTROL and SHIFT to the web
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
- 
+
 while True:
     event, values = window.read(timeout=100)
 
@@ -522,6 +524,22 @@ while True:
         print("[LOG] Went to the TREE page")
         window['-TREE_TAB-'].select()
 
+        correct_directory_treecode = os.path.expanduser("~/Downloads/")
+        clustal_treecode_path = os.path.join(correct_directory_treecode, "clustalo*p1m.ph")
+        matching_files_treecode = glob.glob(clustal_treecode_path)
+        matching_files_treecode.sort(key=os.path.getmtime, reverse=True)
+
+        if matching_files_treecode:
+            latest_file = matching_files_treecode[0]
+
+            with open(latest_file, 'r') as file:
+                file_contenttreecode = file.read()
+            window['-OUTPUT-'].update(file_contenttreecode)
+        
+        else:
+            print("No matching files found...")
+
+
     if event == "-B0-":
         print("[LOG] Went back to the START page")
         window['-START_TAB-'].select()
@@ -537,12 +555,15 @@ while True:
     if event == "-B3-":
         print("[LOG Went back to the MSA page]")
         window['-MSA_TAB-'].select()
-    
+        window['-OUTPUT-'].update(file_contentmsa)
+        
     if event == "-CLEARBLAST-":
         window['-INFILE-'].update('')
+        window['-QUERY-'].update('')
 
     if event == "-CLEARMSA-":
         window['-FILENAMEMSA-'].update('')
+        window['-QUERYMSA-'].update('')
 
 
 #===================================================================================================================
@@ -771,9 +792,9 @@ while True:
 
         while max_wait_time_filter > 0:
             try:
-                #===================================================================================================================
-                # DEFINE THE EVENTS OF THE CUSTOMIZE LAYOUT =====================================================================
-                #===================================================================================================================
+#===================================================================================================================
+# DEFINE THE EVENTS OF THE CUSTOMIZE LAYOUT ========================================================================
+#===================================================================================================================
                 
                 # Input information about '-PERCENTIDMIN-':
                 prcLow_element = wait.until(EC.presence_of_element_located((By.ID, 'prcLow')))
@@ -855,6 +876,7 @@ while True:
         # Performint the Next step -N1-
         # if event == '-N1-':
         #     window['-FILENAMEMSA-'].update(file_path)
+
 #===================================================================================================================
 # DEFINE THE EVENTS OF THE MSA LAYOUT ==============================================================================
 #===================================================================================================================
@@ -939,31 +961,31 @@ while True:
                 summary_button.click()
                 clustal_num = wait_msa.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="links"]/dl/dd[3]/a')))
                 clustal_num.click()
-                time.sleep(1)
                 clustal_treecodepage = wait_msa.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="links"]/dl/dd[5]/a')))
                 clustal_treecodepage.click()
-                time.sleep(1)
-                import pyautogui
                 pyautogui.hotkey('ctrl', 's')
                 pyautogui.press('enter')
+                print('[LOG] The files have been downloaded')
+                driver.close()
                 break
 
             except TimeoutException:
                 max_wait_time_msa -= update_interval_msa
                 continue
         
-        clustal_treecode_path = os.path.expanduser("~/Downloads/clustalo*plm.ph")
-        if os.path.exists(clustal_treecode_path):
-            with open(clustal_treecode_path, 'r') as file:
-                file_contentcodetree = file.read()
-            window['-OUTPUT-'].update(file_contentcodetree)
+        correct_directory = os.path.expanduser("~/Downloads/")
+        clustal_msa_path = os.path.join(correct_directory, "clustalo*p1m.clustal_num")
+        matching_files = glob.glob(clustal_msa_path)
+        matching_files.sort(key=os.path.getmtime, reverse=True)
 
+        if matching_files:
+            latest_file = matching_files[0]
 
-        # file_path = os.path.expanduser("~/Downloads/seqdump.txt")
-        # if os.path.exists(file_path):
-        #     with open(file_path, 'r') as file:
-        #         file_content = file.read()
-        # window['-OUTPUT-'].update(file_content)
-
+            with open(latest_file, 'r') as file:
+                file_contentmsa = file.read()
+            window['-OUTPUT-'].update(file_contentmsa)
+        
+        else:
+            print("No matching files found...")
 
 # window.close()
