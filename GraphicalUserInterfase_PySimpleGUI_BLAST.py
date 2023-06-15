@@ -8,6 +8,7 @@
 # Installations ----------------------------------------------------------------------------------------------------
 # pip install pysimplegui (v4.60.4)
 # pip install pyautogui (v0.9.54)
+# pip install opencv-python (v4.7.0.72)
 
 # Load the packages ------------------------------------------------------------------------------------------------
 import PySimpleGUI as sg
@@ -470,8 +471,10 @@ window['-IMAGE6-'].update(data=image6)
 #                                                   Event loop                                                     #
 ####################################################################################################################
 ####################################################################################################################
+import cv2                                                          # OpenCV (Open Source Computer Vision Library)
 import glob                                                         # Usage of glob module to use wildcard patterns in filenames
 import pyautogui                                                    # Send keys like CONTROL and SHIFT to the web
+from PIL import Image
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
@@ -963,10 +966,25 @@ while True:
                 clustal_num.click()
                 clustal_treecodepage = wait_msa.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="links"]/dl/dd[5]/a')))
                 clustal_treecodepage.click()
+
                 pyautogui.hotkey('ctrl', 's')
                 pyautogui.press('enter')
                 print('[LOG] The files have been downloaded')
-                driver.close()
+                driver.back()
+
+
+                clustal_PT = wait_msa.until(EC.element_to_be_clickable((By.ID, "phylotree")))
+                clustal_PT.click()
+
+                image_tree = driver.find_element(By.ID, "tv_tree")
+                image_tree.screenshot("image_tree.png")
+                cwd = os.getcwd()
+                downloads_dir = os.path.expanduser('~/Downloads')
+                new_path = os.path.join (downloads_dir, 'image_tree.png')
+                import shutil
+                shutil.move('image_tree.png', new_path)
+
+                # driver.close()
                 break
 
             except TimeoutException:
@@ -987,5 +1005,18 @@ while True:
         
         else:
             print("No matching files found...")
+    
+    # if event == 'BUILD':
+    #     image_tree_path = os.path.join(downloads_dir, 'image_tree.png')
+    #     if os.path.exists(image_tree_path):
+    #         im7 = Image.open(image_tree_path)
+    #         size = (1196,206)
+    #         im7 = im7.resize(size, resample=Image.BICUBIC)
+    #         image7 = ImageTk.PhotoImage(image=im7)
+    #         window['-IMAGE7-'].update(data=image7)
+    #         window['-VISUALTREE-'].update('-IMAGE7-')
+
+
+
 
 # window.close()
