@@ -471,9 +471,9 @@ window['-IMAGE6-'].update(data=image6)
 #                                                   Event loop                                                     #
 ####################################################################################################################
 ####################################################################################################################
-import cv2                                                          # OpenCV (Open Source Computer Vision Library)
 import glob                                                         # Usage of glob module to use wildcard patterns in filenames
 import pyautogui                                                    # Send keys like CONTROL and SHIFT to the web
+from ete3 import Tree                                               # To build the Tree
 from PIL import Image
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -1001,22 +1001,33 @@ while True:
 
             with open(latest_file, 'r') as file:
                 file_contentmsa = file.read()
+
             window['-OUTPUT-'].update(file_contentmsa)
         
         else:
             print("No matching files found...")
     
-    # if event == 'BUILD':
-    #     image_tree_path = os.path.join(downloads_dir, 'image_tree.png')
-    #     if os.path.exists(image_tree_path):
-    #         im7 = Image.open(image_tree_path)
-    #         size = (1196,206)
-    #         im7 = im7.resize(size, resample=Image.BICUBIC)
-    #         image7 = ImageTk.PhotoImage(image=im7)
-    #         window['-IMAGE7-'].update(data=image7)
-    #         window['-VISUALTREE-'].update('-IMAGE7-')
 
+    if event == 'BUILD':
+        print("[LOG] Building the TREE")
+        correct_directory_treeviewer = os.path.expanduser("~/Downloads/")
+        clustal_treeviewer_path = os.path.join(correct_directory_treeviewer, "clustalo*p1m.ph")
+        matching_files_treeviewer = glob.glob(clustal_treeviewer_path)
+        matching_files_treeviewer.sort(key=os.path.getmtime, reverse=True)
 
+        if matching_files_treeviewer:
+            latest_file_treeviewer = matching_files_treeviewer[0]
 
+            unrooted_tree = Tree(latest_file_treeviewer)
+            tree_file = "unrooted_tree.nw"
+            with open (tree_file, "w") as file:
+                print(unrooted_tree, file=file)
 
+            with open("unrooted_tree.nw", 'r') as file:
+                file_contenttreeviewer = file.read()
+            window['-VISUALTREE-'].update(file_contenttreeviewer)
+        
+        else:
+            print("No matching files found...")
+        
 # window.close()
