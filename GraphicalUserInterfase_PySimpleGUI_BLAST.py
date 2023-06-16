@@ -27,8 +27,7 @@ for package, version in packages.items():
 
 # Load the packages ------------------------------------------------------------------------------------------------
 import PySimpleGUI as sg
-from PIL import Image, ImageTk, ImageSequence
-import PIL.Image
+from PIL import Image, ImageTk
 import os
 import time
 
@@ -744,22 +743,9 @@ while True:
         if values['-DBBLASTN-'] == 'Sequence tagged sites (dbsts)':
             values['-DBBLASTN-'] = 'SS'
 
-        # while event == 'BLASTN':
-        #     try:
-        #         inputdatabase = values['-DBBLASTN-']
-        #     except event == 'BLASTP':
-        #         inputdatabase = values['-DBBLASTP-']
-        #         continue
-    
-        # BLAST P works because it is the standard
-        # if event == '-BLASTN-':
-        #     inputdatabase = values['-DBBLASTN-']
-        # else:
-        #     inputdatabase = values['-DBBLASTP-']
-
         inputdatabasebutton = driver.find_element(By.ID, "DATABASE")
         inputdatabasebutton.click()
-        # BLAST N works because it is the standard
+        # BLAST P works because it is the standard
         inputdatabase = values['-DBBLASTP-']
         database = driver.find_element(By.ID, "DATABASE")
         database.send_keys(inputdatabase)
@@ -832,6 +818,7 @@ while True:
                 # Input information about '-ORGANISMID-':
                 driver.find_element(By.ID, 'qorganism').send_keys(values['-ORGANISMID-'])
                 ExecuteFilter = driver.find_element(By.ID, 'btnFilter')
+                time.sleep(1)
                 ExecuteFilter.click()
                 print('[LOG] Filtering has started')
                 break
@@ -860,21 +847,20 @@ while True:
         
     # BY DOWNLOADING, FIRST SPECIFY ON -AMOUNTSEQ-, THEN DOWNLOAD!
     #-------------------------------------------------------------------------------------------------
-
-        # Display the output file
-        # download_directory = os.path.expanduser("~/Downloads")
-        # latest_file = get_latest_file(download_directory)
-        # if latest_file:
-        #     with open(latest_file, 'r') as file:
-        #         file_content = file.read()
-        #     window['-OUTPUT-'].update(file_content)
-        # else:
-        #     print("No files found in the directory.")
-        file_path = os.path.expanduser("~/Downloads/seqdump.txt")
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as file:
-                file_content = file.read()
-        window['-OUTPUT-'].update(file_content)
+        # Choose the last downloaded/modified file
+        correct_directory_BlastfileForMSA = os.path.expanduser("~/Downloads/")
+        BlastfileForMSA_path = os.path.join(correct_directory_BlastfileForMSA, "*seqdump*")
+        matching_BlastfileForMSA = glob.glob(BlastfileForMSA_path)
+        matching_BlastfileForMSA.sort(key=os.path.getmtime, reverse=True)
+        
+        if matching_BlastfileForMSA:
+            latest_matching_BlastfileForMSA = matching_BlastfileForMSA[0]
+            
+        # file_path = os.path.expanduser("~/Downloads/seqdump.txt")
+            if os.path.exists(latest_matching_BlastfileForMSA):
+                with open(latest_matching_BlastfileForMSA, 'r') as file:
+                    file_content_BlastfileForMSA = file.read()
+            window['-OUTPUT-'].update(file_content_BlastfileForMSA)
         
         # Loading Ready ----------------------------------------------------------------------------------------------
         popup_window['-POPUP-TEXT-'].update('Blast completed!')
@@ -888,12 +874,15 @@ while True:
             popup_event, popup_values = popup_window.read()
             if popup_event == '-POPUP-FINISH-' or popup_event == sg.WINDOW_CLOSED:
                 popup_window.close()
+                window['-MSA_TAB-'].select()
+                
+                if matching_BlastfileForMSA:
+                    latest_matching_BlastfileForMSA = matching_BlastfileForMSA[0]
+                    window['-FILENAMEMSA-'].update(latest_matching_BlastfileForMSA)
+
                 break
 
             # driver.quit()
-        # Performint the Next step -N1-
-        # if event == '-N1-':
-        #     window['-FILENAMEMSA-'].update(file_path)
 
 #===================================================================================================================
 # DEFINE THE EVENTS OF THE MSA LAYOUT ==============================================================================
@@ -915,7 +904,8 @@ while True:
         driver.find_element(By.ID, 'sequence').send_keys(values['-QUERYMSA-'])
 
         # Input information about the -FILEUPLOADMSA-'
-        inputfilemsa = values['-FILEUPLOADMSA-']
+        inputfilemsa = values['-FILENAMEMSA-']
+        # inputfilemsa = values['-FILEUPLOADMSA-']
         print(inputfilemsa)
         if inputfilemsa:
             uploadmsa = driver.find_element(By.ID, "upfile")
