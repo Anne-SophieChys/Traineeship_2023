@@ -6,9 +6,24 @@
 ####################################################################################################################
 
 # Installations ----------------------------------------------------------------------------------------------------
-# pip install pysimplegui (v4.60.4)
-# pip install pyautogui (v0.9.54)
-# pip install opencv-python (v4.7.0.72)
+import importlib
+import subprocess
+
+# list of packages to check and install
+packages = {
+    'PySimpleGUI': '4.60.4',
+    'pyautogui': '0.9.54',
+    'ete3': '3.1.3'
+    }
+
+for package, version in packages.items():
+    try:
+        importlib.import_module(package)
+        print(f"{package} v{version} is already installed")
+
+    except ImportError:
+        subprocess.check_call(['pip', 'install', f"{package}=={version}"])
+        print(f"{package} v{version} has been installed")
 
 # Load the packages ------------------------------------------------------------------------------------------------
 import PySimpleGUI as sg
