@@ -285,36 +285,36 @@ building the phylogenetic tree', size=(105,None))],
                     
                        [sg.HSeparator()],
 
-                       [sg.Text('Specify the number of sequences:')],
-                       [sg.Text('Number of sequences\t\t\t\t          ', font='AnyFont 9 bold'),
+                       [sg.Text('Number of sequences', font='AnyFont 9 bold')],
+                       [sg.Text('Specify the number of sequences:\t\t\t        '),
                         sg.VSeparator(),
                         sg.Input(key='-AMOUNTSEQ-', border_width=0, size=(7,0))],
                         
-                       [sg.Text('Specify the minimum and maximum percent identity:')],                       
-                       [sg.Text('Percent Identity\t\t\t\t\t          ', font='AnyFont 9 bold'),
+                       [sg.Text('Percent Identity', font='AnyFont 9 bold')],                       
+                       [sg.Text('Specify the minimum and maximum percent identity:\t        '),
                         sg.VSeparator(),
                         sg.Input(key='-PERCENTIDMIN-', border_width=0, size=(7,0)),
                         sg.Text('to'),
                         sg.Input(key='-PERCENTIDMAX-', border_width=0, size=(7,0))], 
 
-                       [sg.Text('Specify the minimum and maximum E value:')],                       
-                       [sg.Text('E value\t\t\t\t\t\t          ', font='AnyFont 9 bold'),
+                       [sg.Text('E value', font='AnyFont 9 bold')],                       
+                       [sg.Text('Specify the minimum and maximum E value:\t\t        '),
                         sg.VSeparator(),
                         sg.Input(key='-EVALUEMIN-', border_width=0, size=(7,0)),
                         sg.Text('to'),
                         sg.Input(key='-EVALUEMAX-', border_width=0, size=(7,0))],
 
-                        [sg.Text('Specify the minimum and maximum query coverage:')],                       
-                        [sg.Text('Query Coverage\t\t\t\t\t          ', font='AnyFont 9 bold'),
+                        [sg.Text('Query Coverage', font='AnyFont 9 bold')],                       
+                        [sg.Text('Specify the minimum and maximum query coverage:\t        '),
                         sg.VSeparator(),
                         sg.Input(key='-QUERYCOVERAGEMIN-', border_width=0, size=(7,0)),
                         sg.Text('to'),
                         sg.Input(key='-QUERYCOVERAGEMAX-', border_width=0, size=(7,0))],
 
-                        [sg.Text('Specify the organism:')],                       
-                        [sg.Text('Organism\t\t\t\t\t          ', font='AnyFont 9 bold'),
+                        [sg.Text('Organism', font='AnyFont 9 bold')],                       
+                        [sg.Text('Specify the organism:\t\t\t\t        '),
                         sg.VSeparator(),
-                        sg.Input(key='-ORGANISMID-', border_width=0)],
+                        sg.Input(key='-ORGANISMID-', border_width=0, default_text='')],
 
                        [sg.Text('\t\t\t\t\t        '),
                         sg.Button('BLAST', font='AnyFont, 13'),
@@ -648,16 +648,19 @@ while True:
             [sg.Text('            ', key='-EMOJI_DREAMING_SPACE-'),
              sg.Image(data=sg.EMOJI_BASE64_DREAMING, visible=True, key='-EMOJI_DREAMING-'),
              sg.Text('       ', key='-EMOJI_HAPPY_SPACE-'),
+             sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, enable_events=True, key='-LOADING-IMAGE-'),
              sg.Image(data=sg.EMOJI_BASE64_HAPPY_JOY, visible=False, key='-EMOJI_HAPPY-')],
 
             [sg.Text('      '),
              sg.Button('Finish', key='-POPUP-FINISH-', visible=False)]
             ]
+        
 
         popup_window = sg.Window('Blast in progress', popup_layout, modal=True, finalize=True,
                                  keep_on_top=True, auto_size_text=True)
 
-    
+        popup_window['-LOADING-IMAGE-'].update_animation(sg.DEFAULT_BASE64_LOADING_GIF, time_between_frames=100)
+
         for _ in range (1):
             popup_window['-EMOJI_DREAMING-'].update(visible=True)
             popup_window['-EMOJI_HAPPY-'].update(visible=False)
@@ -832,9 +835,9 @@ while True:
                 # Download the file
                 download_button = wait.until(EC.element_to_be_clickable((By.ID, "btnDwnld")))
                 download_button.click()
-                time.sleep(1)
+                # time.sleep(3)
                 print("[LOG] Clicked on the Download button")
-                download_button2 = driver.find_element(By.ID, 'dwFST')
+                download_button2 = wait.until(EC.element_to_be_clickable((By.ID, 'dwFST')))
                 download_button2.click()
                 time.sleep(3)
                 print("[LOG] The file has been downloaded")
