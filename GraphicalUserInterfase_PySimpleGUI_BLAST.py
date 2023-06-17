@@ -293,7 +293,7 @@ building the phylogenetic tree', size=(105,None))],
                        [sg.Text('Percent Identity', font='AnyFont 9 bold')],                       
                        [sg.Text('Specify the minimum and maximum percent identity:\t        '),
                         sg.VSeparator(),
-                        sg.Input(key='-PERCENTIDMIN-', border_width=0, size=(7,0)),
+                        sg.Input(key='-PERCENTIDMIN-', border_width=0, size=(7,0), default_text=' '),
                         sg.Text('to'),
                         sg.Input(key='-PERCENTIDMAX-', border_width=0, size=(7,0))], 
 
@@ -314,7 +314,7 @@ building the phylogenetic tree', size=(105,None))],
                         [sg.Text('Organism', font='AnyFont 9 bold')],                       
                         [sg.Text('Specify the organism:\t\t\t\t        '),
                         sg.VSeparator(),
-                        sg.Input(key='-ORGANISMID-', border_width=0, default_text='')],
+                        sg.Input(key='-ORGANISMID-', border_width=0)],
 
                        [sg.Text('\t\t\t\t\t        '),
                         sg.Button('BLAST', font='AnyFont, 13'),
@@ -648,19 +648,16 @@ while True:
             [sg.Text('            ', key='-EMOJI_DREAMING_SPACE-'),
              sg.Image(data=sg.EMOJI_BASE64_DREAMING, visible=True, key='-EMOJI_DREAMING-'),
              sg.Text('       ', key='-EMOJI_HAPPY_SPACE-'),
-             sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, enable_events=True, key='-LOADING-IMAGE-'),
              sg.Image(data=sg.EMOJI_BASE64_HAPPY_JOY, visible=False, key='-EMOJI_HAPPY-')],
 
             [sg.Text('      '),
              sg.Button('Finish', key='-POPUP-FINISH-', visible=False)]
             ]
-        
 
         popup_window = sg.Window('Blast in progress', popup_layout, modal=True, finalize=True,
                                  keep_on_top=True, auto_size_text=True)
 
-        popup_window['-LOADING-IMAGE-'].update_animation(sg.DEFAULT_BASE64_LOADING_GIF, time_between_frames=100)
-
+    
         for _ in range (1):
             popup_window['-EMOJI_DREAMING-'].update(visible=True)
             popup_window['-EMOJI_HAPPY-'].update(visible=False)
