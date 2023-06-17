@@ -844,7 +844,7 @@ while True:
             except TimeoutException:
                 max_wait_time_download -= update_interval
                 continue
-        
+                
     # BY DOWNLOADING, FIRST SPECIFY ON -AMOUNTSEQ-, THEN DOWNLOAD!
     #-------------------------------------------------------------------------------------------------
         # Choose the last downloaded/modified file
@@ -858,9 +858,20 @@ while True:
             
         # file_path = os.path.expanduser("~/Downloads/seqdump.txt")
             if os.path.exists(latest_matching_BlastfileForMSA):
-                with open(latest_matching_BlastfileForMSA, 'r') as file:
-                    file_content_BlastfileForMSA = file.read()
-            window['-OUTPUT-'].update(file_content_BlastfileForMSA)
+                with open(latest_matching_BlastfileForMSA, 'r+') as file:
+                    lines = file.readlines()
+
+                    sequence_indices = [i for i, line in enumerate(lines) if line.startswith('>')][:5]
+                    
+                    if len(sequence_indices) >= 5:
+                        lines = lines[:sequence_indices[4]+1]
+                    
+                    file.seek(0)
+                    file.truncate()
+
+                    file.writelines(lines)
+
+            window['-OUTPUT-'].update(''.join(lines))
         
         # Loading Ready ----------------------------------------------------------------------------------------------
         popup_window['-POPUP-TEXT-'].update('Blast completed!')
