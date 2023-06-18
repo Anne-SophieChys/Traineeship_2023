@@ -286,7 +286,7 @@ building the phylogenetic tree', size=(105,None))],
                        [sg.HSeparator()],
 
                        [sg.Text('Number of sequences', font='AnyFont 9 bold')],
-                       [sg.Text('Specify the number of sequences:\t\t\t        '),
+                       [sg.Text('Specify the number of sequences if it is not available on NCBI:'),
                         sg.VSeparator(),
                         sg.Input(key='-AMOUNTSEQ-', border_width=0, size=(7,0))],
                         
@@ -855,16 +855,18 @@ while True:
         
         if matching_BlastfileForMSA:
             latest_matching_BlastfileForMSA = matching_BlastfileForMSA[0]
-            
-        # file_path = os.path.expanduser("~/Downloads/seqdump.txt")
+            amountsequences = int(values['-AMOUNTSEQ-'])
+
             if os.path.exists(latest_matching_BlastfileForMSA):
                 with open(latest_matching_BlastfileForMSA, 'r+') as file:
                     lines = file.readlines()
 
-                    sequence_indices = [i for i, line in enumerate(lines) if line.startswith('>')][:5]
+                    sequence_indices = [i for i, line in enumerate(lines) if line.startswith('>')][:amountsequences+1]
                     
-                    if len(sequence_indices) >= 5:
-                        lines = lines[:sequence_indices[4]+1]
+                    if len(sequence_indices) >= amountsequences+1:
+                        lines = lines[:sequence_indices[amountsequences]+1]
+
+                    lines = lines[:-1]
                     
                     file.seek(0)
                     file.truncate()
