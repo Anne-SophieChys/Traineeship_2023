@@ -396,7 +396,8 @@ interpretation.', size=(105,None))],
 
               [sg.HSeparator()],
 
-              [sg.Frame('Visual Tree Output', [[sg.T(size=(103,24), background_color='#F7F3EC', key="-VISUALTREE-")]])],
+              [sg.Frame('Visual Tree Output', [[sg.Multiline(size=(103,24), background_color='#F7F3EC', key="-VISUALTREE-",
+                                                     autoscroll=False)]])],
 
               [sg.Text('\n\n\t\t\t\t\t       '),
                sg.Button('BUILD', font='AnyFont, 13'),
@@ -572,7 +573,10 @@ while True:
     if event == "-B3-":
         print("[LOG Went back to the MSA page]")
         window['-MSA_TAB-'].select()
-        window['-OUTPUT-'].update(file_contentmsa)
+        try:
+            window['-OUTPUT-'].update(file_contentmsa)
+        except NameError:
+            window['-OUTPUT-'].update('')
         
     if event == "-CLEARBLAST-":
         window['-INFILE-'].update('')
@@ -657,7 +661,6 @@ while True:
         popup_window = sg.Window('Blast in progress', popup_layout, modal=True, finalize=True,
                                  keep_on_top=True, auto_size_text=True)
 
-    
         for _ in range (1):
             popup_window['-EMOJI_DREAMING-'].update(visible=True)
             popup_window['-EMOJI_HAPPY-'].update(visible=False)
@@ -895,7 +898,7 @@ while True:
 
                 break
 
-            # driver.quit()
+            driver.quit()
 
 #===================================================================================================================
 # DEFINE THE EVENTS OF THE MSA LAYOUT ==============================================================================
@@ -903,6 +906,28 @@ while True:
     if event == 'MSA':
         print("[LOG] Clicked 'MSA'")
 
+        # POPUP
+        popup_layout = [
+            [sg.Text('Performing MSA... Please wait!',
+                     font='AnyFont 12 bold', key='-POPUP-TEXT-')],
+
+            [sg.Text('            ', key='-EMOJI_DREAMING_SPACE-'),
+             sg.Image(data=sg.EMOJI_BASE64_DREAMING, visible=True, key='-EMOJI_DREAMING-'),
+             sg.Text('       ', key='-EMOJI_HAPPY_SPACE-'),
+             sg.Image(data=sg.EMOJI_BASE64_HAPPY_JOY, visible=False, key='-EMOJI_HAPPY-')],
+
+            [sg.Text('      '),
+             sg.Button('Finish', key='-POPUP-FINISH-', visible=False)]
+            ]
+
+        popup_window = sg.Window('MSA in progress', popup_layout, modal=True, finalize=True,
+                                 keep_on_top=True, auto_size_text=True)
+
+        for _ in range (1):
+            popup_window['-EMOJI_DREAMING-'].update(visible=True)
+            popup_window['-EMOJI_HAPPY-'].update(visible=False)
+
+        # Perofrm the driver    
         driver = (webdriver.Firefox())
         driver.get(urlclustal)
 
@@ -918,7 +943,6 @@ while True:
 
         # Input information about the -FILEUPLOADMSA-'
         inputfilemsa = values['-FILENAMEMSA-']
-        # inputfilemsa = values['-FILEUPLOADMSA-']
         print(inputfilemsa)
         if inputfilemsa:
             uploadmsa = driver.find_element(By.ID, "upfile")
@@ -977,11 +1001,15 @@ while True:
         
         while max_wait_time_msa > 0:
             try:
-                # Download the file
+                # Download the files
                 summary_button = wait_msa.until(EC.element_to_be_clickable((By.ID, "summary")))
                 summary_button.click()
+
+                # Download the first file
                 clustal_num = wait_msa.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="links"]/dl/dd[3]/a')))
                 clustal_num.click()
+
+                # Download the second file
                 clustal_treecodepage = wait_msa.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="links"]/dl/dd[5]/a')))
                 clustal_treecodepage.click()
 
@@ -990,17 +1018,17 @@ while True:
                 print('[LOG] The files have been downloaded')
                 driver.back()
 
+                # # A picture of the tree is downloaded
+                # clustal_PT = wait_msa.until(EC.element_to_be_clickable((By.ID, "phylotree")))
+                # clustal_PT.click()
 
-                clustal_PT = wait_msa.until(EC.element_to_be_clickable((By.ID, "phylotree")))
-                clustal_PT.click()
-
-                image_tree = driver.find_element(By.ID, "tv_tree")
-                image_tree.screenshot("image_tree.png")
-                cwd = os.getcwd()
-                downloads_dir = os.path.expanduser('~/Downloads')
-                new_path = os.path.join (downloads_dir, 'image_tree.png')
-                import shutil
-                shutil.move('image_tree.png', new_path)
+                # image_tree = driver.find_element(By.ID, "tv_tree")
+                # image_tree.screenshot("image_tree.png")
+                # cwd = os.getcwd()
+                # downloads_dir = os.path.expanduser('~/Downloads')
+                # new_path = os.path.join (downloads_dir, 'image_tree.png')
+                # import shutil
+                # shutil.move('image_tree.png', new_path)
 
                 # driver.close()
                 break
@@ -1025,6 +1053,20 @@ while True:
         else:
             print("No matching files found...")
     
+        # Loading Ready ----------------------------------------------------------------------------------------------
+        popup_window['-POPUP-TEXT-'].update('MSA completed!')
+        popup_window['-POPUP-FINISH-'].update(visible=True)
+        popup_window['-EMOJI_HAPPY-'].update(visible=True)
+        popup_window['-EMOJI_HAPPY_SPACE-'].update(visible=True)
+        popup_window['-EMOJI_DREAMING-'].update(visible=False)
+        popup_window['-EMOJI_DREAMING_SPACE-'].update(visible=False)
+
+        while True:
+            popup_event, popup_values = popup_window.read()
+            if popup_event == '-POPUP-FINISH-' or popup_event == sg.WINDOW_CLOSED:
+                popup_window.close()
+                
+                break
 
     if event == 'BUILD':
         print("[LOG] Building the TREE")
@@ -1038,7 +1080,8 @@ while True:
 
             unrooted_tree = Tree(latest_file_treeviewer)
             tree_file = "unrooted_tree.nw"
-            with open (tree_file, "w") as file:
+            with open (tree_file, 'w') as file:
+                print('', file=file)
                 print(unrooted_tree, file=file)
 
             with open("unrooted_tree.nw", 'r') as file:
