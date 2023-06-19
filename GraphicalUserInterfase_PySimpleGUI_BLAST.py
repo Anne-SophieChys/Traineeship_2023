@@ -392,12 +392,16 @@ offers the capability to build phylogenetic trees using the neighborhood joining
 Clustal Omega. This new feature allows users to analyze the evolutionary relationships among their \
 sequences and gain insights into their genetic similarities and divergence. By integrating the \
 tree-building functionality, ANSO provides a comprehensive toolkit for sequence analysis and \
-interpretation.', size=(105,None))],
+interpretation.\n', size=(105,None))],
 
-              [sg.HSeparator()],
+            #   [sg.HSeparator()],
 
-              [sg.Frame('Visual Tree Output', [[sg.Multiline(size=(103,24), background_color='#F7F3EC', key="-VISUALTREE-",
+              [sg.Frame('Visual Tree Output', [[sg.Multiline(size=(103,21), background_color='#F7F3EC', key="-VISUALTREE-",
                                                      autoscroll=False)]])],
+
+              [sg.Input(enable_events=True, key='-INFILETREE-', expand_x=True, default_text="No file selected...", readonly=True),
+               sg.FileBrowse(key='-FILEUPLOADBLAST-'),
+               sg.Button('Clear', key='-CLEARBLAST-')],
 
               [sg.Text('\n\n\t\t\t\t\t       '),
                sg.Button('BUILD', font='AnyFont, 13'),
@@ -537,6 +541,10 @@ while True:
     if event == "-N2-":
         print("[LOG] Went to MSA page")
         window['-MSA_TAB-'].select()
+        try:
+            window['-OUTPUT-'].update(file_contentmsa)
+        except:
+            window['-OUTPUT-'].update('')
 
     if event == "-N3-":
         print("[LOG] Went to the TREE page")
@@ -569,6 +577,10 @@ while True:
     if event == "-B2-":
         print("[LOG] Went back to the CUSTOMIZE page")
         window['-CUSTOMIZE_TAB-'].select()
+        try:
+            window['-OUTPUT-'].update(latest_matching_BlastfileForMSA)
+        except:
+            window['-OUTPUT-'].update('')
 
     if event == "-B3-":
         print("[LOG Went back to the MSA page]")
