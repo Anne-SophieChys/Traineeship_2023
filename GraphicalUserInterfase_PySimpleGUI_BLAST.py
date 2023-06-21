@@ -311,10 +311,11 @@ building the phylogenetic tree', size=(105,None))],
                         sg.Text('to'),
                         sg.Input(key='-QUERYCOVERAGEMAX-', border_width=0, size=(7,0))],
 
-                        [sg.Text('Organism', font='AnyFont 9 bold')],                       
-                        [sg.Text('Specify the organism:\t\t\t\t        '),
-                        sg.VSeparator(),
-                        sg.Input(key='-ORGANISMID-', border_width=0)],
+                        [sg.Text('\n\n')],
+                        # [sg.Text('Organism', font='AnyFont 9 bold')],                       
+                        # [sg.Text('Specify the organism:\t\t\t\t        '),
+                        # sg.VSeparator(),
+                        # sg.Input(key='-ORGANISMID-', border_width=0)],
 
                        [sg.Text('\t\t\t\t\t        '),
                         sg.Button('BLAST', font='AnyFont, 13'),
@@ -392,20 +393,16 @@ offers the capability to build phylogenetic trees using the neighborhood joining
 Clustal Omega. This new feature allows users to analyze the evolutionary relationships among their \
 sequences and gain insights into their genetic similarities and divergence. By integrating the \
 tree-building functionality, ANSO provides a comprehensive toolkit for sequence analysis and \
-interpretation.\n', size=(105,None))],
+interpretation.', size=(105,None))],
 
-            #   [sg.HSeparator()],
+              [sg.HSeparator()],
 
               [sg.Frame('Visual Tree Output', [[sg.Multiline(size=(103,21), background_color='#F7F3EC', key="-VISUALTREE-",
                                                      autoscroll=False)]])],
 
-              [sg.Input(enable_events=True, key='-INFILETREE-', expand_x=True, default_text="No file selected...", readonly=True),
-               sg.FileBrowse(key='-FILEUPLOADBLAST-'),
-               sg.Button('Clear', key='-CLEARBLAST-')],
-
-              [sg.Text('\n\n\t\t\t\t\t       '),
+              [sg.Text('\n\n\n\t\t\t\t\t       '),
                sg.Button('BUILD', font='AnyFont, 13'),
-               sg.Text('\n\n\n\n\n\n\n\n')],
+               sg.Text('\n\n\n\n\n\n\n\n\n\n\n')],
 
                [sg.Button('< Back', font='AnyFont, 10', key='-B3-')]]
 
@@ -597,7 +594,6 @@ while True:
     if event == "-CLEARMSA-":
         window['-FILENAMEMSA-'].update('')
         window['-QUERYMSA-'].update('')
-
 
 #===================================================================================================================
 # DEFINE THE EVENTS OF THE BLAST LAYOUT ============================================================================
@@ -831,10 +827,11 @@ while True:
                 # Input information about '-QUERYCOVERAGEMAX-':
                 driver.find_element(By.ID, 'qcHigh').send_keys(values['-QUERYCOVERAGEMAX-'])
                 # Input information about '-ORGANISMID-':
-                driver.find_element(By.ID, 'qorganism').send_keys(values['-ORGANISMID-'])
+                # driver.find_element(By.ID, 'qorganism').send_keys(values['-ORGANISMID-'])
                 ExecuteFilter = driver.find_element(By.ID, 'btnFilter')
                 time.sleep(1)
                 ExecuteFilter.click()
+                time.sleep(1)
                 print('[LOG] Filtering has started')
                 break
           
@@ -851,16 +848,15 @@ while True:
                 print("[LOG] Clicked on the Download button")
                 download_button2 = wait.until(EC.element_to_be_clickable((By.ID, 'dwFST')))
                 download_button2.click()
-                time.sleep(3)
                 print("[LOG] The file has been downloaded")
-                driver.close
+                time.sleep(5)
+                # driver.close()
                 break
 
             except TimeoutException:
                 max_wait_time_download -= update_interval
                 continue
                 
-    # BY DOWNLOADING, FIRST SPECIFY ON -AMOUNTSEQ-, THEN DOWNLOAD!
     #-------------------------------------------------------------------------------------------------
         # Choose the last downloaded/modified file
         correct_directory_BlastfileForMSA = os.path.expanduser("~/Downloads/")
@@ -923,7 +919,7 @@ while True:
             [sg.Text('Performing MSA... Please wait!',
                      font='AnyFont 12 bold', key='-POPUP-TEXT-')],
 
-            [sg.Text('            ', key='-EMOJI_DREAMING_SPACE-'),
+            [sg.Text('                    ', key='-EMOJI_DREAMING_SPACE-'),
              sg.Image(data=sg.EMOJI_BASE64_DREAMING, visible=True, key='-EMOJI_DREAMING-'),
              sg.Text('       ', key='-EMOJI_HAPPY_SPACE-'),
              sg.Image(data=sg.EMOJI_BASE64_HAPPY_JOY, visible=False, key='-EMOJI_HAPPY-')],
@@ -1024,25 +1020,25 @@ while True:
                 # Download the second file
                 clustal_treecodepage = wait_msa.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="links"]/dl/dd[5]/a')))
                 clustal_treecodepage.click()
+                time.sleep(2)
 
-                pyautogui.hotkey('ctrl', 's')
+                pyautogui.hotkey('ctrl', 's', interval=0.25)
                 pyautogui.press('enter')
                 print('[LOG] The files have been downloaded')
                 driver.back()
 
-                # # A picture of the tree is downloaded
-                # clustal_PT = wait_msa.until(EC.element_to_be_clickable((By.ID, "phylotree")))
-                # clustal_PT.click()
+                # A picture of the tree is downloaded
+                clustal_PT = wait_msa.until(EC.element_to_be_clickable((By.ID, "phylotree")))
+                clustal_PT.click()
 
-                # image_tree = driver.find_element(By.ID, "tv_tree")
-                # image_tree.screenshot("image_tree.png")
-                # cwd = os.getcwd()
-                # downloads_dir = os.path.expanduser('~/Downloads')
-                # new_path = os.path.join (downloads_dir, 'image_tree.png')
-                # import shutil
-                # shutil.move('image_tree.png', new_path)
-
-                # driver.close()
+                image_tree = driver.find_element(By.ID, "tv_tree")
+                image_tree.screenshot("image_tree.png")
+                cwd = os.getcwd()
+                downloads_dir = os.path.expanduser('~/Downloads')
+                new_path = os.path.join (downloads_dir, 'image_tree.png')
+                import shutil
+                shutil.move('image_tree.png', new_path)
+                driver.close()
                 break
 
             except TimeoutException:
@@ -1077,7 +1073,6 @@ while True:
             popup_event, popup_values = popup_window.read()
             if popup_event == '-POPUP-FINISH-' or popup_event == sg.WINDOW_CLOSED:
                 popup_window.close()
-                
                 break
 
     if event == 'BUILD':
@@ -1093,7 +1088,6 @@ while True:
             unrooted_tree = Tree(latest_file_treeviewer)
             tree_file = "unrooted_tree.nw"
             with open (tree_file, 'w') as file:
-                print('', file=file)
                 print(unrooted_tree, file=file)
 
             with open("unrooted_tree.nw", 'r') as file:
